@@ -1,0 +1,46 @@
+locals {
+  fineract_rds_sg_common_tags = var.tags
+}
+
+resource "aws_security_group" "fineract_rds_sg" {
+  vpc_id = var.vpc_id
+  name   = "${var.project_name}-${var.project_segment}-${var.project_env}-fineract-rds-sg"
+
+  dynamic "ingress" {
+    for_each = var.fineract_rds_allowed_ips
+    content {
+      from_port   = 3306
+      to_port     = 3306
+      protocol    = "tcp"
+      cidr_blocks = [ingress.key]
+      description = ingress.value
+    }
+  } 
+
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [var.bastion_sg_id]
+    description     = "Allow MySQL from Bastion SG"
+  }
+
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_cluster_sg.id]
+    description     = "Allow MySQL from EKS Cluster"
+  }
+  
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.fineract_rds_sg_common_tags, tomap({
+    Name = "${var.project_name}-${var.project_segment}-${var.project_env}-fineract-sg"
+  }))
+}
