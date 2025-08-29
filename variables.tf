@@ -21,7 +21,7 @@ variable "project_segment" {
 }
 
 variable "bastionEC2" {
-  type = map(string)
+  type        = map(string)
   description = "Configuration for bastion EC2 instance"
 }
 
