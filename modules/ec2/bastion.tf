@@ -41,7 +41,7 @@ resource "aws_instance" "bastion_ec2" {
   root_block_device {
     volume_size           = var.bastionEC2["volume_size"]
     volume_type           = var.bastionEC2["volume_type"]
-    encrypted             = var.bastionEC2["encrypted"]
+    encrypted             = true
     kms_key_id            = var.kms_key  # KMS key ARN for encryption
     delete_on_termination = var.bastionEC2["delete_on_termination"]
     tags = merge(local.bastion_common_tags, tomap({"Name": "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-root-volume"}))

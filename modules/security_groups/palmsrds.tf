@@ -34,10 +34,19 @@ ingress {
 }
   
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [var.bastion_sg_id]
+    description     = "Allow all outbound to Bastion SG"
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.eks_cluster_sg.id]
+    description     = "Allow all outbound to EKS Cluster SG"
   }
 
   tags = merge(local.palms_rds_sg_common_tags, tomap({

@@ -17,11 +17,15 @@ resource "aws_security_group" "bastion_sg" {
     }
   } 
   
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "egress" {
+    for_each = var.bastion_ssh_allowed_ips
+    content {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = [ingress.key]
+      description = "Allow all outbound to ${ingress.value}"
+    }
   }
 
   tags = merge(local.bastion_sg_common_tags, tomap({
