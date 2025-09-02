@@ -7,14 +7,24 @@ resource "aws_s3_bucket" "tf_s3_bucket_iboadocuments" {
   )
 }
 
-# Server-side encryption with AES256
+# Server-side encryption with KMS
 resource "aws_s3_bucket_server_side_encryption_configuration" "tf_s3_bucket_iboadocuments_encryption" {
   bucket = aws_s3_bucket.tf_s3_bucket_iboadocuments.id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      kms_master_key_id = var.kms_key_arn
+      sse_algorithm     = "aws:kms"
     }
+    bucket_key_enabled = true
+  }
+}
+
+# Enable versioning
+resource "aws_s3_bucket_versioning" "tf_s3_bucket_iboadocuments_versioning" {
+  bucket = aws_s3_bucket.tf_s3_bucket_iboadocuments.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -26,6 +36,41 @@ resource "aws_s3_bucket_public_access_block" "tf_s3_bucket_public_access_block_i
    block_public_policy     = true
    ignore_public_acls      = true
    restrict_public_buckets = true
+}
+
+# Bucket policy to enforce encryption
+resource "aws_s3_bucket_policy" "tf_s3_bucket_iboadocuments_policy" {
+  bucket = aws_s3_bucket.tf_s3_bucket_iboadocuments.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "DenyIncorrectEncryptionHeader"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:PutObject"
+        Resource  = "${aws_s3_bucket.tf_s3_bucket_iboadocuments.arn}/*"
+        Condition = {
+          StringNotEquals = {
+            "s3:x-amz-server-side-encryption" = "aws:kms"
+          }
+        }
+      },
+      {
+        Sid       = "DenyUnencryptedObjectUploads"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:PutObject"
+        Resource  = "${aws_s3_bucket.tf_s3_bucket_iboadocuments.arn}/*"
+        Condition = {
+          Null = {
+            "s3:x-amz-server-side-encryption" = true
+          }
+        }
+      }
+    ]
+  })
+  depends_on = [aws_s3_bucket_public_access_block.tf_s3_bucket_public_access_block_iboadocumets]
 }
 
 # Create LoanDocuments folder
