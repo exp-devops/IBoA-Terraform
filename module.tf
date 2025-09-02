@@ -2,7 +2,7 @@
 data "aws_caller_identity" "current" {}
 
 module "vpc" {
-  source                 = "./modules/vpc"
+  source                  = "./modules/vpc"
   aws_region             = var.aws_region
   project_name           = var.project_name
   project_env            = var.project_env
@@ -16,17 +16,18 @@ module "vpc" {
 }
 
 module "eks" {
-  source               = "./modules/eks"
-  project_name         = var.project_name
-  project_segment      = var.project_segment
-  project_env          = var.project_env
-  tags                 = var.tags
-  vpc_id               = module.vpc.vpc_id
-  private_subnet_01    = module.vpc.private_subnet_01
-  private_subnet_02    = module.vpc.private_subnet_02
-  eksProperty          = var.eksProperty
-  eks_cluster_sg_id    = module.security_groups.eks_cluster_sg_id
+  source              = "./modules/eks"
+  project_name        = var.project_name
+  project_segment     = var.project_segment
+  project_env         = var.project_env
+  tags                = var.tags
+  vpc_id              = module.vpc.vpc_id
+  private_subnet_01   = module.vpc.private_subnet_01
+  private_subnet_02   = module.vpc.private_subnet_02
+  eksProperty         = var.eksProperty
+  eks_cluster_sg_id   = module.security_groups.eks_cluster_sg_id
   eks_additional_sg_id = module.security_groups.eks_additional_sg_id
+  kms_key_arn         = module.kms.kms_key.arn
 }
 
 /*module "acm" {
@@ -63,7 +64,7 @@ module "s3" {
   project_env     = var.project_env
   tags            = var.tags
   aws_account_id  = data.aws_caller_identity.current.account_id
-
+  kms_key_arn     = module.kms.kms_key.arn
 }
 
 /*module "cloudfront" {
@@ -95,21 +96,21 @@ module "waf" {
 }*/
 
 module "rds" {
-  source             = "./modules/rds"
-  aws_region         = var.aws_region
-  project_segment    = var.project_segment
-  rdsProperty        = var.rdsProperty
-  rdsProperty_mysql  = var.rdsProperty_mysql
-  project_name       = var.project_name
-  project_env        = var.project_env
-  tags               = var.tags
-  private_subnet_01  = module.vpc.private_subnet_01
-  private_subnet_02  = module.vpc.private_subnet_02
-  vpc_id             = module.vpc.vpc_id
-  kms_key            = module.kms.kms_key
-  network_cidr       = var.network_cidr
-  palms_rds_sg_id    = module.security_groups.palms_rds_sg_id
-  fineract_rds_sg_id = module.security_groups.fineract_rds_sg_id
+  source              = "./modules/rds"
+  aws_region          = var.aws_region
+  project_segment     = var.project_segment
+  rdsProperty         = var.rdsProperty
+  rdsProperty_mysql   = var.rdsProperty_mysql
+  project_name        = var.project_name
+  project_env         = var.project_env
+  tags                = var.tags
+  private_subnet_01   = module.vpc.private_subnet_01
+  private_subnet_02   = module.vpc.private_subnet_02
+  vpc_id              = module.vpc.vpc_id
+  kms_key             = module.kms.kms_key
+  network_cidr        = var.network_cidr
+  palms_rds_sg_id     = module.security_groups.palms_rds_sg_id
+  fineract_rds_sg_id  = module.security_groups.fineract_rds_sg_id
 }
 
 module "ec2" {
@@ -128,16 +129,16 @@ module "ec2" {
 module "security_groups" {
   source = "./modules/security_groups"
 
-  tags                     = var.tags
-  project_name             = var.project_name
-  project_segment          = var.project_segment
-  project_env              = var.project_env
-  vpc_id                   = module.vpc.vpc_id
-  bastion_ssh_allowed_ips  = var.bastion_ssh_allowed_ips
-  palms_rds_allowed_ips    = var.palms_rds_allowed_ips
-  rds_port                 = var.rdsProperty["PORT"]
-  bastion_sg_id            = module.security_groups.bastion_sg_id
-  fineract_rds_allowed_ips = var.fineract_rds_allowed_ips
+  tags                      = var.tags
+  project_name              = var.project_name
+  project_segment           = var.project_segment
+  project_env               = var.project_env
+  vpc_id                    = module.vpc.vpc_id
+  bastion_ssh_allowed_ips   = var.bastion_ssh_allowed_ips
+  palms_rds_allowed_ips     = var.palms_rds_allowed_ips
+  rds_port                  = var.rdsProperty["PORT"]
+  bastion_sg_id             = module.security_groups.bastion_sg_id
+  fineract_rds_allowed_ips  = var.fineract_rds_allowed_ips
   #alb_sg_id                 = module.security_groups.alb_sg_id
   #container_app_port        = var.container_app_port
   #background_container_port = var.background_container_port
@@ -161,7 +162,7 @@ module "security_groups" {
   bg_service_port      = var.bg_service_port
 }
 
-module "ecs" {
+/*module "ecs" {
   source                       = "./modules/ecs"
   tags                         = var.tags
   project_segment              = var.project_segment
@@ -195,18 +196,18 @@ module "ecs" {
   bg_task_execution_role_name  = var.bg_task_execution_role_name
   background_target_group_arn  = module.alb.background_target_group_arn
   ses_domain_name              = var.ses_domain_name
-}
+}*/
 
-module "secrets_manager" {
+/*module "secrets_manager" {
   source          = "./modules/secrets_manager"
   tags            = var.tags
   project_name    = var.project_name
   project_segment = var.project_segment
   project_env     = var.project_env
-}
+}*/
 
 
-module "codepipeline" {
+/*module "codepipeline" {
   source = "./modules/codepipeline"
 
   ############## Codepipline Moudle Common Variables ##############
@@ -260,9 +261,9 @@ module "codepipeline" {
   ecrBackgroundRepositoryURL    = module.ecr.background_ecr_repo_url
   ecsBackgroundServiceContainer = tolist(module.ecs.ecs_background_service_container.load_balancer)[0].container_name
   bg_Dockerfile_path            = var.bg_Dockerfile_path
-}
+}*/
 
-module "ses" {
+/*module "ses" {
   source = "./modules/ses"
 
   project_name    = var.project_name
