@@ -4,10 +4,19 @@ resource "aws_eks_cluster" "main" {
   version  = var.eksProperty["CLUSTER_VERSION"]
   role_arn = aws_iam_role.eks_cluster_role.arn
 
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+  encryption_config {
+    provider {
+      key_arn = var.kms_key_arn
+    }
+    resources = ["secrets"]
+  }
+
   vpc_config {
     subnet_ids              = [var.private_subnet_01, var.private_subnet_02]
     endpoint_private_access = true
-    endpoint_public_access  = true
+    endpoint_public_access  = false
     security_group_ids      = [var.eks_cluster_sg_id]
   }
 
