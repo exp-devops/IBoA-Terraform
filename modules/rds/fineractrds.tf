@@ -40,7 +40,7 @@ resource "aws_db_parameter_group" "fineract_mysql" {
 
 # MySQL RDS Instance
 resource "aws_db_instance" "fineract_db_instance" {
-  identifier          = "${var.project_name}${var.project_segment}${var.project_env}fineractrdsinstance"
+  identifier          = "${var.project_name}-${var.project_segment}-${var.project_env}-fineractrdsinstance"
   engine              = var.rdsProperty_mysql["ENGINE"]
   engine_version      = var.rdsProperty_mysql["ENGINE_VERSION"]
   instance_class      = var.rdsProperty_mysql["INSTANCE_CLASS"]

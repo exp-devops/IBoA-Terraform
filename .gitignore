@@ -19,6 +19,15 @@
 ### Terraform template
 .terraform
 .terraform.lock.hcl
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
 
 ### Windows template
 # Windows thumbnail cache files
