@@ -1,3 +1,22 @@
+##### Key pair generation for EKS nodes #####
+resource "tls_private_key" "eks_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+# Save EKS private key locally
+resource "local_file" "eks_private_key" {
+  content         = tls_private_key.eks_key.private_key_pem
+  filename        = "${path.root}/keys/${var.project_name}-${var.project_segment}-${var.project_env}-eks-key.pem"
+  file_permission = "0400"  # Read-only for the current user
+}
+
+# Upload EKS public key to AWS EC2 Key Pair
+resource "aws_key_pair" "eks_key_pair" {
+  key_name   = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-key"
+  public_key = tls_private_key.eks_key.public_key_openssh
+}
+
 # EKS Cluster
 resource "aws_eks_cluster" "main" {
   name     = "${var.project_name}-${var.project_segment}-${var.project_env}-cluster"
@@ -5,6 +24,10 @@ resource "aws_eks_cluster" "main" {
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+  kubernetes_network_config {
+    ip_family = "ipv4"
+  }
 
   encryption_config {
     provider {
@@ -33,6 +56,43 @@ resource "aws_eks_cluster" "main" {
   )
 }
 
+# EKS Add-ons
+resource "aws_eks_addon" "coredns" {
+  cluster_name                = aws_eks_cluster.main.name
+  addon_name                  = "coredns"
+  addon_version              = "v1.11.4-eksbuild.14"  # Use appropriate version
+  resolve_conflicts_on_update = "PRESERVE"
+}
+
+resource "aws_eks_addon" "vpc_cni" {
+  cluster_name                = aws_eks_cluster.main.name
+  addon_name                  = "vpc-cni"
+  addon_version              = "v1.20.1-eksbuild.3"  # Use appropriate version
+  resolve_conflicts_on_update = "PRESERVE"
+}
+
+resource "aws_eks_addon" "kube_proxy" {
+  cluster_name                = aws_eks_cluster.main.name
+  addon_name                  = "kube-proxy"
+  addon_version              = "v1.32.6-eksbuild.8"  # Use appropriate version
+  resolve_conflicts_on_update = "PRESERVE"
+}
+
+resource "aws_eks_addon" "aws_ebs_csi_driver" {
+  cluster_name                = aws_eks_cluster.main.name
+  addon_name                  = "aws-ebs-csi-driver"
+  addon_version              = "v1.40.1-eksbuild.1"  # Use appropriate version
+  resolve_conflicts_on_update = "PRESERVE"
+}
+
+resource "aws_eks_addon" "cloudwatch_observability" {
+  cluster_name                = aws_eks_cluster.main.name
+  addon_name                  = "amazon-cloudwatch-observability"
+  addon_version              = "v3.4.0-eksbuild.1"  # Use appropriate version
+  resolve_conflicts_on_update = "OVERWRITE"
+  preserve                    = true
+}
+
 /*# Security Group for EKS Cluster
 resource "aws_security_group" "eks_cluster" {
   name        = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-cluster-sg"
@@ -55,18 +115,22 @@ resource "aws_security_group" "eks_cluster" {
 }*/
 
 # EKS Node Groups
-resource "aws_eks_node_group" "node_group_1" {
+resource "aws_eks_node_group" "node_group_SOLVI" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-palmsNG-1"
+  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [var.private_subnet_01]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
   disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
 
   scaling_config {
-    desired_size = tonumber(var.eksProperty["NG1_DESIRED_SIZE"])
-    max_size     = tonumber(var.eksProperty["NG1_MAX_SIZE"])
-    min_size     = tonumber(var.eksProperty["NG1_MIN_SIZE"])
+    desired_size = tonumber(var.eksProperty["SOLVI_DESIRED_SIZE"])
+    max_size     = tonumber(var.eksProperty["SOLVI_MAX_SIZE"])
+    min_size     = tonumber(var.eksProperty["SOLVI_MIN_SIZE"])
+  }
+
+  remote_access {
+    ec2_ssh_key = aws_key_pair.eks_key_pair.key_name
   }
 
   depends_on = [
@@ -76,30 +140,34 @@ resource "aws_eks_node_group" "node_group_1" {
   ]
 
   labels = {
-    NodeGroup = "group1"
+    NodeGroup = "SOLVI"
     Environment = var.project_env
   }
 
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-palmsNG-1"
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Solvi-NG"
     }
   )
 }
 
-resource "aws_eks_node_group" "node_group_2" {
+resource "aws_eks_node_group" "node_group_FINERACT" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-fineractNG-2"
+  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACT"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [var.private_subnet_02]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
   disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
 
   scaling_config {
-    desired_size = tonumber(var.eksProperty["NG2_DESIRED_SIZE"])
-    max_size     = tonumber(var.eksProperty["NG2_MAX_SIZE"])
-    min_size     = tonumber(var.eksProperty["NG2_MIN_SIZE"])
+    desired_size = tonumber(var.eksProperty["FINERACT_DESIRED_SIZE"])
+    max_size     = tonumber(var.eksProperty["FINERACT_MAX_SIZE"])
+    min_size     = tonumber(var.eksProperty["FINERACT_MIN_SIZE"])
+  }
+
+  remote_access {
+    ec2_ssh_key = aws_key_pair.eks_key_pair.key_name
   }
 
   depends_on = [
@@ -108,10 +176,15 @@ resource "aws_eks_node_group" "node_group_2" {
     aws_iam_role_policy_attachment.ecr_read_only
   ]
 
+  labels = {
+    NodeGroup = "FINERACT"
+    Environment = var.project_env
+  }
+
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-fineractNG-2"
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Fineract-NG"
     }
   )
 }

@@ -18,12 +18,12 @@ output "cluster_security_group_id" {
   value       = var.eks_cluster_sg_id
 }
 
-output "node_group_1_id" {
+output "node_group_SOLVI_id" {
   description = "ID of the first node group"
-  value       = aws_eks_node_group.node_group_1.id
+  value       = aws_eks_node_group.node_group_SOLVI.id
 }
 
-output "node_group_2_id" {
+output "node_group_FINERACT_id" {
   description = "ID of the second node group"
-  value       = aws_eks_node_group.node_group_2.id
+  value       = aws_eks_node_group.node_group_FINERACT.id
 }
