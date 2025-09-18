@@ -13,7 +13,7 @@ output "fineract_rds_sg_id" {
   value       = aws_security_group.fineract_rds_sg.id
 }
 
-output "eks_cluster_sg_id" {
+/*output "eks_cluster_sg_id" {
   description = "ID of the EKS cluster security group"
   value       = aws_security_group.eks_cluster_sg.id
 }
@@ -21,4 +21,4 @@ output "eks_cluster_sg_id" {
 output "eks_additional_sg_id" {
   description = "ID of the additional EKS security group"
   value       = aws_security_group.eks_additional_sg.id
-}
+}*/

@@ -25,8 +25,9 @@ module "eks" {
   private_subnet_01   = module.vpc.private_subnet_01
   private_subnet_02   = module.vpc.private_subnet_02
   eksProperty         = var.eksProperty
-  eks_cluster_sg_id   = module.security_groups.eks_cluster_sg_id
-  eks_additional_sg_id = module.security_groups.eks_additional_sg_id
+  #eks_cluster_sg_id   = module.security_groups.eks_cluster_sg_id
+  #eks_additional_sg_id = module.security_groups.eks_additional_sg_id
+  eks_cluster_security_group_id = module.eks.default_cluster_security_group_id
   kms_key_arn         = module.kms.kms_key.arn
 }
 
@@ -139,6 +140,7 @@ module "security_groups" {
   rds_port                  = var.rdsProperty["PORT"]
   bastion_sg_id             = module.security_groups.bastion_sg_id
   fineract_rds_allowed_ips  = var.fineract_rds_allowed_ips
+  eks_cluster_security_group_id = module.eks.default_cluster_security_group_id
   #alb_sg_id                 = module.security_groups.alb_sg_id
   #container_app_port        = var.container_app_port
   #background_container_port = var.background_container_port

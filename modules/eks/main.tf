@@ -1,3 +1,30 @@
+resource "aws_security_group" "eks_remote_access" {
+  name        = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-remote-access-sg"
+  description = "Security group for remote access to EKS nodes, whitelisting the default EKS cluster security group"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    security_groups = [aws_eks_cluster.main.vpc_config[0].cluster_security_group_id]
+    description = "Allow all traffic from default EKS cluster security group"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-remote-access-sg"
+    }
+  )
+}
 ##### Key pair generation for EKS nodes #####
 resource "tls_private_key" "eks_key" {
   algorithm = "RSA"
@@ -40,7 +67,7 @@ resource "aws_eks_cluster" "main" {
     subnet_ids              = [var.private_subnet_01, var.private_subnet_02]
     endpoint_private_access = true
     endpoint_public_access  = false
-    security_group_ids      = [var.eks_cluster_sg_id]
+    #security_group_ids      = [var.eks_cluster_sg_id]
   }
 
     access_config {
@@ -135,6 +162,7 @@ resource "aws_eks_node_group" "node_group_SOLVI" {
 
   remote_access {
     ec2_ssh_key = aws_key_pair.eks_key_pair.key_name
+    source_security_group_ids = [aws_security_group.eks_remote_access.id]
   }
 
   depends_on = [
@@ -170,8 +198,15 @@ resource "aws_eks_node_group" "node_group_FINERACT" {
     min_size     = tonumber(var.eksProperty["FINERACT_MIN_SIZE"])
   }
 
+    taint {
+      key    = "dedicated"
+      value  = "solvifineract"
+      effect = "NO_SCHEDULE"
+    }
+
   remote_access {
     ec2_ssh_key = aws_key_pair.eks_key_pair.key_name
+    source_security_group_ids = [aws_security_group.eks_remote_access.id]
   }
 
   depends_on = [

@@ -1,3 +1,7 @@
+variable "eks_cluster_security_group_id" {
+  description = "Default security group ID for the EKS cluster created by AWS"
+  type        = string
+}
 ### Common Variables ###
 variable "project_name" {
   type        = string

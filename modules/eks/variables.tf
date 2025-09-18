@@ -38,7 +38,7 @@ variable "eksProperty" {
   description = "EKS cluster and node group properties"
 }
 
-variable "eks_cluster_sg_id" {
+/*variable "eks_cluster_sg_id" {
   type        = string
   description = "Security group ID for the EKS cluster"
 }
@@ -46,10 +46,15 @@ variable "eks_cluster_sg_id" {
 variable "eks_additional_sg_id" {
   type        = string
   description = "Security group ID for the additional EKS resources"
-}
+}*/
 
 variable "kms_key_arn" {
   type        = string
   description = "ARN of the KMS key to use for EKS encryption"
+}
+
+variable "eks_cluster_security_group_id" {
+  type        = string
+  description = "Security group ID for the EKS cluster"
 }
 

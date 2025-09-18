@@ -1,5 +1,5 @@
 # EKS Cluster Security Group
-resource "aws_security_group" "eks_cluster_sg" {
+/*resource "aws_security_group" "eks_cluster_sg" {
   name        = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-cluster-sg"
   description = "Security group for EKS cluster control plane"
   vpc_id      = var.vpc_id
@@ -30,4 +30,4 @@ resource "aws_security_group_rule" "cluster_inbound_additional_sg" {
   source_security_group_id = aws_security_group.eks_additional_sg.id
   security_group_id        = aws_security_group.eks_cluster_sg.id
   description              = "Allow inbound traffic from additional security group"
-}
+}*/
