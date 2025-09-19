@@ -87,6 +87,24 @@ resource "aws_eks_cluster" "main" {
   )
 }
 
+# EKS Access Entry for IAM User
+resource "aws_eks_access_policy_association" "devops_user" {
+  cluster_name  = aws_eks_cluster.main.name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  principal_arn = "arn:aws:iam::782683897710:user/devopsexperion"
+
+  access_scope {
+    type = "cluster"
+  }
+}
+
+# EKS Access Entry for IAM User
+resource "aws_eks_access_entry" "devops_user" {
+  cluster_name      = aws_eks_cluster.main.name
+  principal_arn     = "arn:aws:iam::782683897710:user/devopsexperion"
+  type             = "STANDARD"
+}
+
 # EKS Add-ons
 resource "aws_eks_addon" "coredns" {
   cluster_name                = aws_eks_cluster.main.name

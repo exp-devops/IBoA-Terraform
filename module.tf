@@ -31,6 +31,17 @@ module "eks" {
   kms_key_arn         = module.kms.kms_key.arn
 }
 
+/*module "alb" {
+  source            = "./modules/alb"
+  project_name      = var.project_name
+  project_segment   = var.project_segment
+  project_env       = var.project_env
+  tags             = var.tags
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_01 = module.vpc.public_subnet_01
+  public_subnet_02 = module.vpc.public_subnet_02
+}*/
+
 /*module "acm" {
   source                    = "./modules/acm"
   tags                      = var.tags
@@ -144,24 +155,6 @@ module "security_groups" {
   #alb_sg_id                 = module.security_groups.alb_sg_id
   #container_app_port        = var.container_app_port
   #background_container_port = var.background_container_port
-}
-
-/*module "alb" {
-  source               = "./modules/alb"
-  tags                 = var.tags
-  project_segment      = var.project_segment
-  project_name         = var.project_name
-  project_env          = var.project_env
-  alb_app_port         = var.alb_app_port
-  az_count             = var.az_count
-  health_check_path    = var.health_check_path
-  vpc_id               = module.vpc.vpc_id
-  public_subnet_01     = module.vpc.public_subnet_01
-  public_subnet_02     = module.vpc.public_subnet_02
-  alb_sg_id            = module.security_groups.alb_sg_id
-  alb_certificate_arn  = module.acm.alb_acm_certificate_arn
-  bg_health_check_path = var.bg_health_check_path
-  bg_service_port      = var.bg_service_port
 }
 
 /*module "ecs" {
