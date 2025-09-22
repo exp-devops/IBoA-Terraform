@@ -32,3 +32,8 @@ variable "public_subnet_02" {
   type        = string
   description = "ID of the second public subnet"
 }
+
+ variable "kms_key_arn" {
+  type        = string
+  description = "ARN of the KMS key to use for S3 bucket encryption"
+}

@@ -40,6 +40,7 @@ module "alb" {
   vpc_id           = module.vpc.vpc_id
   public_subnet_01 = module.vpc.public_subnet_01
   public_subnet_02 = module.vpc.public_subnet_02
+  kms_key_arn      = module.kms.kms_key.arn
 }
 
 module "waf" {
