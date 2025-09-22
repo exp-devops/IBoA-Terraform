@@ -48,7 +48,21 @@ module "waf" {
   project_env  = var.project_env
   tags        = var.tags
   alb_arn     = module.alb.alb_arn
-  waf_enabled = true
+}
+
+module "secrets_manager" {
+  source                = "./modules/secrets_manager"
+  project_name          = var.project_name
+  project_segment       = var.project_segment
+  project_env          = var.project_env
+  tags                 = var.tags
+  kms_key_id          = module.kms.kms_key.id
+  rdsProperty         = var.rdsProperty
+  rdsProperty_mysql   = var.rdsProperty_mysql
+  palms_rds_username    = module.rds.palms_rds_username
+  palms_rds_password    = module.rds.palms_rds_password
+  fineract_rds_username = module.rds.fineract_rds_username
+  fineract_rds_password = module.rds.fineract_rds_password
 }
 
 /*module "acm" {
