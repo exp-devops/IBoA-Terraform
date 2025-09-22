@@ -31,7 +31,7 @@ module "eks" {
   kms_key_arn         = module.kms.kms_key.arn
 }
 
-/*module "alb" {
+module "alb" {
   source            = "./modules/alb"
   project_name      = var.project_name
   project_segment   = var.project_segment
@@ -40,7 +40,16 @@ module "eks" {
   vpc_id           = module.vpc.vpc_id
   public_subnet_01 = module.vpc.public_subnet_01
   public_subnet_02 = module.vpc.public_subnet_02
-}*/
+}
+
+module "waf" {
+  source       = "./modules/waf"
+  project_name = var.project_name
+  project_env  = var.project_env
+  tags        = var.tags
+  alb_arn     = module.alb.alb_arn
+  waf_enabled = true
+}
 
 /*module "acm" {
   source                    = "./modules/acm"
@@ -92,19 +101,6 @@ module "s3" {
   alb_domain_name              = var.alb_domain_name
   frontend_s3_website_endpoint = module.s3.frontend_s3_website_endpoint
   alb_arn                      = module.alb.alb_arn
-}
-
-
-module "waf" {
-  source          = "./modules/waf"
-  tags            = var.tags
-  project_segment = var.project_segment
-  project_name    = var.project_name
-  project_env     = var.project_env
-  # alb_arn             = module.alb.alb_arn
-  waf_allowed_ips      = var.waf_allowed_ips
-  aws_cli_profile_name = var.aws_cli_profile_name
-  cdn_aws_region       = var.cdn_aws_region
 }*/
 
 module "rds" {

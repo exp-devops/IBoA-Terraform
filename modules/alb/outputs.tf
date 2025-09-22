@@ -17,3 +17,8 @@ output "alb_security_group_id" {
   description = "ARN of the default target group"
   value       = aws_lb_target_group.default.arn
 }*/
+
+output "alb_logs_bucket" {
+  description = "Name of the S3 bucket for ALB logs"
+  value       = aws_s3_bucket.alb_logs.id
+}
