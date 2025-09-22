@@ -14,3 +14,16 @@ output "bastionserver_public_key" {
   value       = tls_private_key.bastion_key.public_key_openssh
   description = "The generated public key for the file server"
 }
+
+# View the private key (be cautious, as this is sensitive information)
+output "rabbitmqserver_private_key" {
+  value       = tls_private_key.rabbitmq_key.private_key_pem
+  description = "The generated private key for the RabbitMQ server"
+  sensitive   = true  # Mark as sensitive to avoid it being displayed in logs
+}
+
+# View the public key
+output "rabbitmqserver_public_key" {
+  value       = tls_private_key.rabbitmq_key.public_key_openssh
+  description = "The generated public key for the RabbitMQ server"
+}

@@ -22,3 +22,8 @@ output "eks_additional_sg_id" {
   description = "ID of the additional EKS security group"
   value       = aws_security_group.eks_additional_sg.id
 }*/
+
+output "rabbitmq_sg_id" {
+  description = "ID of the RabbitMQ security group"
+  value       = aws_security_group.rabbitmq.id
+}

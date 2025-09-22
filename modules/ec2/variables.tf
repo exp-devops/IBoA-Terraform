@@ -37,6 +37,14 @@ variable "kms_key" {
   type        = string
 }
 
-# variable "network_cidr" {
-#   description = "CIDR block for the VPC"
-# }
+variable "rabbitmq_sg_id" {
+  description = "Security group ID for the RabbitMQ server"
+}
+
+variable "private_subnet_01" {
+  description = "Private subnet for the RabbitMQ server"
+}
+
+variable "rabbitmqEC2" {
+  description = "Configuration for RabbitMQ EC2 instance"
+}

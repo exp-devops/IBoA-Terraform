@@ -127,6 +127,15 @@ bastion_ssh_allowed_ips = {
   "3.7.243.85/32" = "Exp_OpenVPN_IP"
 }
 
+# RabbitMQ EC2
+rabbitmqEC2 = {
+  "ami"                    = "ami-0deeb71371199f16f"  # 
+  "instance_type"         = "t3.micro"
+  "volume_size"           = "8"
+  "volume_type"           = "gp3"
+  "delete_on_termination" = true
+}
+
 ############################### ALB ###############################
 /*alb_app_port     = 80
 az_count     = "2"

@@ -25,6 +25,11 @@ variable "bastionEC2" {
   description = "Configuration for bastion EC2 instance"
 }
 
+variable "rabbitmqEC2" {
+  type        = map(string)
+  description = "Configuration for RabbitMQ EC2 instance"
+}
+
 variable "bastion_ssh_allowed_ips" {
   type        = map(string)
   description = "Map of allowed IP addresses for SSH access to the bastion host"

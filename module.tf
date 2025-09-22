@@ -143,10 +143,13 @@ module "ec2" {
   project_segment  = var.project_segment
   project_env      = var.project_env
   public_subnet_01 = module.vpc.public_subnet_01
+  private_subnet_01 = module.vpc.private_subnet_01
   bastion_sg_id    = module.security_groups.bastion_sg_id
+  rabbitmq_sg_id   = module.security_groups.rabbitmq_sg_id
   igw_id           = module.vpc.igw_id
   kms_key          = module.kms.kms_key.arn
   bastionEC2       = var.bastionEC2
+  rabbitmqEC2      = var.rabbitmqEC2
 }
 
 module "security_groups" {
