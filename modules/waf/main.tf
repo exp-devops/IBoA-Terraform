@@ -263,7 +263,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "alb_waf_logging" {
 }
 
 resource "aws_wafv2_web_acl_association" "alb_waf_association" {
-  count        = local.waf_enabled && var.alb_arn != "" ? 1 : 0
+  count        = local.waf_enabled ? 1 : 0
   resource_arn = var.alb_arn
   web_acl_arn  = aws_wafv2_web_acl.alb_waf[0].arn
 

@@ -12,6 +12,12 @@ resource "aws_lb" "main" {
     enabled = true
   }
 
+  depends_on = [
+    aws_s3_bucket.alb_logs,
+    aws_s3_bucket_policy.alb_logs,
+    aws_s3_bucket_ownership_controls.alb_logs
+  ]
+
   tags = merge(
     var.tags,
     {
@@ -93,5 +99,5 @@ resource "aws_lb_listener" "http" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.default.arn
-  }
-}*/
+  }*/
+
