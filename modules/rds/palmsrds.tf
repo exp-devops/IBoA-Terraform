@@ -35,7 +35,7 @@ resource "aws_db_parameter_group" "palms_pg14" {
 
 # PostgreSQL RDS Instance
 resource "aws_db_instance" "palms_db_instance" {
-  identifier          = "${var.project_name}-${var.project_segment}-${var.project_env}-palmsrdsinstance"
+  identifier          = "${var.project_name}-${var.project_segment}-${var.project_env}-palms-rds-instance"
   engine              = var.rdsProperty["ENGINE"]
   engine_version      = var.rdsProperty["ENGINE_VERSION"]
   instance_class      = var.rdsProperty["INSTANCE_CLASS"]
