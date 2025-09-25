@@ -31,3 +31,13 @@ output "fineract_rds_password" {
   value = aws_db_instance.fineract_db_instance.password
   sensitive = true
 }
+
+/*output "fineract_rds_sg_id" {
+  value = aws_security_group.fineract_rds_sg.id
+  description = "Security group ID for the Fineract RDS instance"
+}
+
+output "palms_rds_sg_id" {
+  value = aws_security_group.palms_rds_sg.id
+  description = "Security group ID for the PALMS RDS instance"
+}*/

@@ -56,3 +56,13 @@ variable "fineract_rds_allowed_ips" {
   description = "Map of allowed IP addresses for RDS access"
 }
 
+variable "fineract_rds_sg_id" {
+  description = "Security group ID for the Fineract RDS instance"
+  type        = string
+}
+
+variable "palms_rds_sg_id" {
+  description = "Security group ID for the PALMS RDS instance"
+  type        = string
+}
+

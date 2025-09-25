@@ -34,8 +34,24 @@ resource "aws_security_group" "rabbitmq" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all outbound traffic"
+    security_groups = [var.eks_cluster_security_group_id]
+    description     = "Allow all outbound to EKS Cluster SG"
+  }
+
+  egress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [var.fineract_rds_sg_id]
+    description     = "Allow MySQL traffic to Fineract RDS"
+  }
+
+  egress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [var.palms_rds_sg_id]
+    description     = "Allow PostgreSQL traffic to PALMS RDS"
   }
 
   tags = merge(

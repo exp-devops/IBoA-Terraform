@@ -1,4 +1,3 @@
-
 data "aws_caller_identity" "current" {}
 
 module "vpc" {
@@ -166,6 +165,8 @@ module "security_groups" {
   bastion_sg_id             = module.security_groups.bastion_sg_id
   fineract_rds_allowed_ips  = var.fineract_rds_allowed_ips
   eks_cluster_security_group_id = module.eks.default_cluster_security_group_id
+  fineract_rds_sg_id = module.security_groups.fineract_rds_sg_id
+  palms_rds_sg_id    = module.security_groups.palms_rds_sg_id
   #alb_sg_id                 = module.security_groups.alb_sg_id
   #container_app_port        = var.container_app_port
   #background_container_port = var.background_container_port
