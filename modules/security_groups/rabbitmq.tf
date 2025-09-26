@@ -21,13 +21,16 @@ resource "aws_security_group" "rabbitmq" {
     description     = "Allow SSH from Bastion host"
   }
 
-  # RabbitMQ management console
-  ingress {
-    from_port       = 15672
-    to_port         = 15672
-    protocol        = "tcp"
-  security_groups = [var.bastion_sg_id]
-    description     = "Allow management console access from Bastion host"
+  # RabbitMQ management console - Dynamic IP allowlist
+  dynamic "ingress" {
+    for_each = var.bastion_ssh_allowed_ips
+    content {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [ingress.key]  # Use the current IP from the map
+      description = "Allow management console access from ${ingress.value}"
+    }
   }
 
   egress {
