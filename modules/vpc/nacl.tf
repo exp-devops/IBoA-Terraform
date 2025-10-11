@@ -35,124 +35,185 @@ resource "aws_network_acl_association" "tf_nacl_association_private_02" {
 
 ######## Outbound Rules #######
 
-# Allow all outbound traffic
-resource "aws_network_acl_rule" "allow_all_outbound" {
+# Allow HTTP outbound
+resource "aws_network_acl_rule" "allow_http_outbound" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 100
-  protocol       = "-1" # -1 represents all protocols
-  rule_action    = "allow"
-  cidr_block     = "0.0.0.0/0"
-  egress         = true # Set to true for outbound rule
-}
-
-######## Inbound Rules #######
-
-##### HTTP & HTTPS #####
-resource "aws_network_acl_rule" "allow_http" {
-  network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 99
+  rule_number    = 200
   protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
   from_port      = 80
   to_port        = 80
-  egress         = false
+  egress         = true
 }
 
-resource "aws_network_acl_rule" "allow_https" {
+# Allow HTTPS outbound
+resource "aws_network_acl_rule" "allow_https_outbound" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 101
+  rule_number    = 210
   protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
   from_port      = 443
   to_port        = 443
-  egress         = false
+  egress         = true
 }
 
-##### SSH #####
+# Allow MySQL outbound within VPC
+resource "aws_network_acl_rule" "allow_mysql_outbound" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 220
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.network_cidr
+  from_port      = 3306
+  to_port        = 3306
+  egress         = true
+}
+
+# Allow PostgreSQL outbound within VPC
+resource "aws_network_acl_rule" "allow_postgres_outbound" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 230
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.network_cidr
+  from_port      = 5432
+  to_port        = 5432
+  egress         = true
+}
+
+# Allow RabbitMQ AMQP outbound within VPC
+resource "aws_network_acl_rule" "allow_rabbitmq_amqp_outbound" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 240
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.network_cidr
+  from_port      = 5672
+  to_port        = 5672
+  egress         = true
+}
+
+# Allow RabbitMQ Management Console outbound within VPC
+resource "aws_network_acl_rule" "allow_rabbitmq_management_outbound" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 250
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = var.network_cidr
+  from_port      = 15672
+  to_port        = 15672
+  egress         = true
+}
+
+# Allow Ephemeral Ports outbound for return traffic
+resource "aws_network_acl_rule" "allow_ephemeral_outbound" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 260
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 1024
+  to_port        = 65535
+  egress         = true
+}
+
+######## Inbound Rules #######
+
+# Allow HTTP inbound
+resource "aws_network_acl_rule" "allow_http" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 100
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 80
+  to_port        = 80
+}
+
+# Allow HTTPS inbound
+resource "aws_network_acl_rule" "allow_https" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 110
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 443
+  to_port        = 443
+}
+
+# Allow SSH inbound from specific IPs
 resource "aws_network_acl_rule" "allow_ssh1" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 50
+  rule_number    = 120
   protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = "3.7.243.85/32"
   from_port      = 22
   to_port        = 22
-  egress         = false
 }
 
-resource "aws_network_acl_rule" "allow_ssh2" {
+# Allow MySQL inbound within VPC
+resource "aws_network_acl_rule" "allow_mysql_inbound" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 51
+  rule_number    = 130
   protocol       = "tcp"
   rule_action    = "allow"
-  cidr_block     = "103.135.95.18/32"
-  from_port      = 22
-  to_port        = 22
-  egress         = false
+  cidr_block     = var.network_cidr
+  from_port      = 3306
+  to_port        = 3306
 }
 
-resource "aws_network_acl_rule" "allow_ssh3" {
+# Allow PostgreSQL inbound within VPC
+resource "aws_network_acl_rule" "allow_postgres_inbound" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 52
+  rule_number    = 140
   protocol       = "tcp"
   rule_action    = "allow"
-  cidr_block     = "103.141.54.138/32"
-  from_port      = 22
-  to_port        = 22
-  egress         = false
+  cidr_block     = var.network_cidr
+  from_port      = 5432
+  to_port        = 5432
 }
 
-resource "aws_network_acl_rule" "allow_ssh4" {
+# Allow RabbitMQ AMQP inbound within VPC
+resource "aws_network_acl_rule" "allow_rabbitmq_amqp_inbound" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 53
+  rule_number    = 150
   protocol       = "tcp"
   rule_action    = "allow"
-  cidr_block     = "103.121.27.178/32"
-  from_port      = 22
-  to_port        = 22
-  egress         = false
+  cidr_block     = var.network_cidr
+  from_port      = 5672
+  to_port        = 5672
 }
 
-resource "aws_network_acl_rule" "allow_ssh5" {
+# Allow RabbitMQ Management Console inbound within VPC
+resource "aws_network_acl_rule" "allow_rabbitmq_management_inbound" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 55
+  rule_number    = 160
   protocol       = "tcp"
   rule_action    = "allow"
-  cidr_block     = "103.79.223.18/32"
-  from_port      = 22
-  to_port        = 22
-  egress         = false
+  cidr_block     = var.network_cidr
+  from_port      = 15672
+  to_port        = 15672
 }
 
-
-##### custom Inbound #####
-resource "aws_network_acl_rule" "allow_custom1" {
+# Allow Ephemeral Ports inbound for return traffic
+resource "aws_network_acl_rule" "allow_custom_ports" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 25
+  rule_number    = 170
   protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
-  from_port      = "1024"  #For SFTP/ECR
-  to_port        = "65535" #For SFTP/ECR
-  egress         = false
+  from_port      = 1024
+  to_port        = 65535
 }
 
+# Allow all internal VPC traffic
 resource "aws_network_acl_rule" "allow_internal" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 26
+  rule_number    = 180
   protocol       = "-1"
   rule_action    = "allow"
   cidr_block     = var.network_cidr
-  egress         = false
-}
-
-resource "aws_network_acl_rule" "allow_VPC_NAT" {
-  network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 27
-  protocol       = "-1"
-  rule_action    = "allow"
-  cidr_block     = "13.43.231.220/32"
-  egress         = false
 }
