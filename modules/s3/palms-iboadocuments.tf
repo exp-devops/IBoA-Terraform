@@ -45,6 +45,21 @@ resource "aws_s3_bucket_policy" "tf_s3_bucket_iboadocuments_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid       = "AllowMRAPAccess"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = ["s3:*"]
+        Resource  = [
+          aws_s3_bucket.tf_s3_bucket_iboadocuments.arn,
+          "${aws_s3_bucket.tf_s3_bucket_iboadocuments.arn}/*"
+        ]
+        Condition = {
+          StringEquals = {
+            "s3:DataAccessPointAccount": data.aws_caller_identity.current.account_id
+          }
+        }
+      },
+      {
         Sid       = "DenyIncorrectEncryptionHeader"
         Effect    = "Deny"
         Principal = "*"
