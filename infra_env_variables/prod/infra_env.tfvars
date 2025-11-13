@@ -53,7 +53,7 @@ waf_allowed_ips = [
 ############################### RDS Database ###############################
 rdsProperty = {
   "ENGINE"                  = "postgres"
-  "ENGINE_VERSION"          = "14.12"
+  "ENGINE_VERSION"          = "14.15"
   "INSTANCE_CLASS"          = "db.t3.small"
   "BACKUP_RETENTION_PERIOD" = "7"
   "MULTI_AZ"                = false

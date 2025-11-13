@@ -109,37 +109,44 @@ resource "aws_eks_access_entry" "devops_user" {
 resource "aws_eks_addon" "coredns" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "coredns"
-  addon_version              = "v1.11.4-eksbuild.14"  # Use appropriate version
-  resolve_conflicts_on_update = "PRESERVE"
+  addon_version              = "v1.11.4-eksbuild.24"  # Use appropriate version
+  resolve_conflicts_on_update = "OVERWRITE"
 }
 
 resource "aws_eks_addon" "vpc_cni" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "vpc-cni"
-  addon_version              = "v1.20.1-eksbuild.3"  # Use appropriate version
-  resolve_conflicts_on_update = "PRESERVE"
+  addon_version              = "v1.20.4-eksbuild.1"  # Use appropriate version
+  resolve_conflicts_on_update = "OVERWRITE"
 }
 
 resource "aws_eks_addon" "kube_proxy" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "kube-proxy"
-  addon_version              = "v1.32.6-eksbuild.8"  # Use appropriate version
-  resolve_conflicts_on_update = "PRESERVE"
+  addon_version              = "v1.32.6-eksbuild.12"  # Use appropriate version
+  resolve_conflicts_on_update = "OVERWRITE"
 }
 
 resource "aws_eks_addon" "aws_ebs_csi_driver" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "aws-ebs-csi-driver"
-  addon_version              = "v1.40.1-eksbuild.1"  # Use appropriate version
-  resolve_conflicts_on_update = "PRESERVE"
+  addon_version               = "v1.52.1-eksbuild.1"
+  service_account_role_arn    = aws_iam_role.ebs_csi_driver.arn
+  resolve_conflicts_on_update = "OVERWRITE"
+  resolve_conflicts_on_create = "OVERWRITE"
+
+  depends_on = [
+    aws_iam_role_policy_attachment.ebs_csi_driver_irsa
+  ]
 }
 
 resource "aws_eks_addon" "cloudwatch_observability" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "amazon-cloudwatch-observability"
-  addon_version              = "v3.4.0-eksbuild.1"  # Use appropriate version
+  addon_version              = "v4.6.0-eksbuild.1"  # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
-  preserve                    = true
+  resolve_conflicts_on_create = "OVERWRITE"
+  #preserve                    = true
 }
 
 /*# Security Group for EKS Cluster

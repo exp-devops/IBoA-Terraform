@@ -33,3 +33,19 @@ output "node_group_FINERACT_id" {
   description = "ID of the second node group"
   value       = aws_eks_node_group.node_group_FINERACT.id
 }
+
+# OIDC Provider outputs for IRSA
+output "oidc_provider_arn" {
+  description = "ARN of the OIDC provider for IRSA"
+  value       = aws_iam_openid_connect_provider.eks_oidc_provider.arn
+}
+
+output "oidc_provider_url" {
+  description = "URL of the OIDC provider for IRSA"
+  value       = aws_eks_cluster.main.identity[0].oidc[0].issuer
+}
+
+output "ebs_csi_driver_role_arn" {
+  description = "ARN of the EBS CSI driver IAM role"
+  value       = aws_iam_role.ebs_csi_driver.arn
+}
