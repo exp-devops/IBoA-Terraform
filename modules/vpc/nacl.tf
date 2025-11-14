@@ -1,5 +1,13 @@
 ##### NACL #####
 
+# Get S3 prefix list for the region
+data "aws_prefix_list" "s3" {
+  filter {
+    name   = "prefix-list-name"
+    values = ["com.amazonaws.${var.aws_region}.s3"]
+  }
+}
+
 # Create a NACL for the VPC
 resource "aws_network_acl" "tf_vpc_nacl" {
   vpc_id = aws_vpc.tf_vpc.id
@@ -34,6 +42,18 @@ resource "aws_network_acl_association" "tf_nacl_association_private_02" {
 }
 
 ######## Outbound Rules #######
+
+# Allow HTTPS outbound to S3 prefix list (for EKS CNI plugin and container images)
+resource "aws_network_acl_rule" "allow_https_s3_outbound" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 195
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = data.aws_prefix_list.s3.cidr_blocks[0]
+  from_port      = 443
+  to_port        = 443
+  egress         = true
+}
 
 # Allow HTTP outbound
 resource "aws_network_acl_rule" "allow_http_outbound" {
