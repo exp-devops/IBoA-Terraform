@@ -58,3 +58,8 @@ variable "eks_cluster_security_group_id" {
   description = "Security group ID for the EKS cluster"
 }
 
+variable "bastion_sg_id" {
+  type        = string
+  description = "Security group ID for the bastion host to allow access to EKS cluster"
+}
+

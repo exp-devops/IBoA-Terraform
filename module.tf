@@ -28,6 +28,7 @@ module "eks" {
   #eks_additional_sg_id = module.security_groups.eks_additional_sg_id
   eks_cluster_security_group_id = module.eks.default_cluster_security_group_id
   kms_key_arn         = module.kms.kms_key.arn
+  bastion_sg_id       = module.security_groups.bastion_sg_id
 }
 
 module "alb" {
@@ -84,13 +85,14 @@ module "kms" {
   project_name    = var.project_name
   project_env     = var.project_env
 }
-/*module "ecr" {
+
+module "ecr" {
   source          = "./modules/ecr"
   tags            = var.tags
   project_segment = var.project_segment
   project_name    = var.project_name
   project_env     = var.project_env
-}*/
+}
 
 module "s3" {
   source          = "./modules/s3"

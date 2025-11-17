@@ -2,6 +2,44 @@ locals {
   bastion_common_tags = var.tags
 }
 
+# IAM Role for Bastion EC2 Instance
+resource "aws_iam_role" "bastion_role" {
+  name = "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = merge(local.bastion_common_tags, tomap({
+    Name = "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-role"
+  }))
+}
+
+# Attach AmazonSSMManagedInstanceCore policy to bastion role
+resource "aws_iam_role_policy_attachment" "bastion_ssm_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.bastion_role.name
+}
+
+# IAM Instance Profile for Bastion
+resource "aws_iam_instance_profile" "bastion_profile" {
+  name = "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-profile"
+  role = aws_iam_role.bastion_role.name
+
+  tags = merge(local.bastion_common_tags, tomap({
+    Name = "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-profile"
+  }))
+}
+
 ##### Key pair generation #####
 resource "tls_private_key" "bastion_key" {
   algorithm = "RSA"
@@ -31,6 +69,7 @@ resource "aws_instance" "bastion_ec2" {
   key_name      = aws_key_pair.bastion_key_pair.key_name
   associate_public_ip_address = true
   vpc_security_group_ids = [var.bastion_sg_id]
+  iam_instance_profile = aws_iam_instance_profile.bastion_profile.name
 
   metadata_options {
     http_tokens               = "required"

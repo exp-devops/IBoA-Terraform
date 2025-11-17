@@ -87,6 +87,17 @@ resource "aws_eks_cluster" "main" {
   )
 }
 
+# Security group rule to allow bastion host access to EKS cluster on port 443
+resource "aws_security_group_rule" "eks_cluster_from_bastion" {
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  source_security_group_id = var.bastion_sg_id
+  security_group_id        = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  description              = "Allow HTTPS traffic from bastion host to EKS cluster"
+}
+
 # EKS Access Entry for IAM User
 resource "aws_eks_access_policy_association" "devops_user" {
   cluster_name  = aws_eks_cluster.main.name
@@ -118,6 +129,7 @@ resource "aws_eks_addon" "vpc_cni" {
   addon_name                  = "vpc-cni"
   addon_version              = "v1.20.4-eksbuild.1"  # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
+  resolve_conflicts_on_create = "OVERWRITE"
 }
 
 resource "aws_eks_addon" "kube_proxy" {

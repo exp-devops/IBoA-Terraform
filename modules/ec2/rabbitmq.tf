@@ -2,6 +2,44 @@ locals {
   rabbitmq_common_tags = var.tags
 }
 
+# IAM Role for RabbitMQ EC2 Instance
+resource "aws_iam_role" "rabbitmq_role" {
+  name = "${var.project_name}-${var.project_segment}-${var.project_env}-rabbitmq-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = merge(local.rabbitmq_common_tags, tomap({
+    Name = "${var.project_name}-${var.project_segment}-${var.project_env}-rabbitmq-role"
+  }))
+}
+
+# Attach AmazonSSMManagedInstanceCore policy to rabbitmq role
+resource "aws_iam_role_policy_attachment" "rabbitmq_ssm_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  role       = aws_iam_role.rabbitmq_role.name
+}
+
+# IAM Instance Profile for RabbitMQ
+resource "aws_iam_instance_profile" "rabbitmq_profile" {
+  name = "${var.project_name}-${var.project_segment}-${var.project_env}-rabbitmq-profile"
+  role = aws_iam_role.rabbitmq_role.name
+
+  tags = merge(local.rabbitmq_common_tags, tomap({
+    Name = "${var.project_name}-${var.project_segment}-${var.project_env}-rabbitmq-profile"
+  }))
+}
+
 ##### Key pair generation #####
 resource "tls_private_key" "rabbitmq_key" {
   algorithm = "RSA"
@@ -31,6 +69,7 @@ resource "aws_instance" "rabbitmq_ec2" {
   key_name      = aws_key_pair.rabbitmq_key_pair.key_name
   associate_public_ip_address = true
   vpc_security_group_ids = [var.rabbitmq_sg_id]
+  iam_instance_profile = aws_iam_instance_profile.rabbitmq_profile.name
 
   metadata_options {
     http_tokens               = "required"
