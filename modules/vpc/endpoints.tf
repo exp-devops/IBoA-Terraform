@@ -102,7 +102,7 @@ resource "aws_security_group" "vpc_endpoint_sg" {
     from_port       = 0
     to_port         = 0
     protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    cidr_blocks     = [var.network_cidr]
     description     = "Allow all outbound traffic"
   }
 
