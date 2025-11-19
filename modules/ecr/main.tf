@@ -35,7 +35,7 @@ resource "aws_ecr_repository" "repositories" {
   for_each = toset(local.repositories)
 
   name                 = "${var.project_name}-${var.project_segment}-${var.project_env}-${each.value}"
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = "IMMUTABLE"
 
   encryption_configuration {
     encryption_type = "AES256"
