@@ -13,14 +13,14 @@ resource "aws_vpc" "tf_vpc" {
   enable_dns_hostnames = true
   cidr_block           = var.network_cidr
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-vpc"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-vpc" })
   )
 }
 
 resource "aws_internet_gateway" "tf_igw" {
   vpc_id = aws_vpc.tf_vpc.id
-  tags   = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-igw"})
+  tags = merge(
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-igw" })
   )
 }
 
@@ -29,7 +29,7 @@ resource "aws_subnet" "tf_subnet_public_01" {
   cidr_block        = var.public_subnet_01_cidr
   availability_zone = data.aws_availability_zones.tf_availability_zones.names[0]
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-public-subnet-01"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-public-subnet-01" })
   )
 }
 
@@ -38,7 +38,7 @@ resource "aws_subnet" "tf_subnet_public_02" {
   cidr_block        = var.public_subnet_02_cidr
   availability_zone = data.aws_availability_zones.tf_availability_zones.names[1]
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-public-subnet-02"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-public-subnet-02" })
   )
 }
 
@@ -47,7 +47,7 @@ resource "aws_subnet" "tf_subnet_private_01" {
   cidr_block        = var.private_subnet_01_cidr
   availability_zone = data.aws_availability_zones.tf_availability_zones.names[0]
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-private-subnet-01"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-private-subnet-01" })
   )
 }
 
@@ -56,16 +56,16 @@ resource "aws_subnet" "tf_subnet_private_02" {
   cidr_block        = var.private_subnet_02_cidr
   availability_zone = data.aws_availability_zones.tf_availability_zones.names[1]
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-private-subnet-02"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-private-subnet-02" })
   )
 }
 
 resource "aws_route_table" "tf_rtb_public" {
   vpc_id = aws_vpc.tf_vpc.id
   route {
-    cidr_block = local.public_route_cidr_block
+    cidr_block                = local.public_route_cidr_block
     egress_only_gateway_id    = null
-    gateway_id = aws_internet_gateway.tf_igw.id
+    gateway_id                = aws_internet_gateway.tf_igw.id
     ipv6_cidr_block           = null
     nat_gateway_id            = null
     network_interface_id      = null
@@ -74,9 +74,9 @@ resource "aws_route_table" "tf_rtb_public" {
     local_gateway_id          = null
     vpc_endpoint_id           = null
   }
-  
+
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-public-rt1"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-public-rt1" })
   )
 }
 
@@ -90,7 +90,7 @@ resource "aws_route_table_association" "tf_rta_subnet_public_02" {
   route_table_id = aws_route_table.tf_rtb_public.id
 }
 
- /**** private subnets */
+/**** private subnets */
 /*resource "aws_subnet" "tf_subnet_private_01" {
   vpc_id                  = aws_vpc.tf_vpc.id
   map_public_ip_on_launch = false
@@ -114,7 +114,7 @@ resource "aws_subnet" "tf_subnet_private_02" {
 resource "aws_route_table" "tf_private_rt" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-private-rt1"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-private-rt1" })
   )
 }
 
@@ -133,7 +133,7 @@ resource "aws_eip" "tf_nat_eip" {
   domain     = "vpc"
   depends_on = [aws_internet_gateway.tf_igw]
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-natgw-eip"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-natgw-eip" })
   )
 }
 
@@ -143,7 +143,7 @@ resource "aws_nat_gateway" "tf_nat" {
   subnet_id     = aws_subnet.tf_subnet_public_01.id
   depends_on    = [aws_internet_gateway.tf_igw]
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-nat-gwid"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-nat-gwid" })
   )
 }
 
@@ -163,11 +163,11 @@ resource "aws_flow_log" "vpc_flow_log" {
   log_destination = aws_cloudwatch_log_group.cloudwatch_log_group_vpc.arn
   traffic_type    = "ALL"
   vpc_id          = aws_vpc.tf_vpc.id
-  
+
 }
 
 resource "aws_cloudwatch_log_group" "cloudwatch_log_group_vpc" {
-  name = "${var.project_name}-${var.project_segment}-${var.project_env}-cloudwatch-log-group"
+  name              = "${var.project_name}-${var.project_segment}-${var.project_env}-cloudwatch-log-group"
   retention_in_days = 90
   # lifecycle {
   #   prevent_destroy = true
@@ -194,7 +194,7 @@ data "aws_iam_policy_document" "assume_role" {
 resource "aws_iam_role" "iam_role_vpc" {
   name               = "${var.project_name}-${var.project_segment}-${var.project_env}-vpc-flow-logs-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
-  
+
   tags = merge(
     local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-vpc-flow-logs-role" })
   )

@@ -4,15 +4,15 @@ resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.tf_vpc.id
   service_name      = "com.amazonaws.${var.aws_region}.s3"
   vpc_endpoint_type = "Gateway"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow"
+        Effect    = "Allow"
         Principal = "*"
-        Action = ["s3:*"]
-        Resource = "*"
+        Action    = ["s3:*"]
+        Resource  = "*"
       }
     ]
   })
@@ -82,7 +82,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
 # Associate S3 endpoint with private route table
 resource "aws_vpc_endpoint_route_table_association" "private_s3" {
   vpc_endpoint_id = aws_vpc_endpoint.s3.id
-  route_table_id = aws_route_table.tf_private_rt.id
+  route_table_id  = aws_route_table.tf_private_rt.id
 }
 # Security group for VPC endpoints
 resource "aws_security_group" "vpc_endpoint_sg" {
@@ -91,19 +91,19 @@ resource "aws_security_group" "vpc_endpoint_sg" {
   vpc_id      = aws_vpc.tf_vpc.id
 
   ingress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    cidr_blocks     = [var.network_cidr]
-    description     = "Allow HTTPS from VPC CIDR"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.network_cidr]
+    description = "Allow HTTPS from VPC CIDR"
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = [var.network_cidr]
-    description     = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.network_cidr]
+    description = "Allow all outbound traffic"
   }
 
   tags = merge(

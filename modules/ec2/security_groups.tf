@@ -1,3 +1,42 @@
+# Security Groups for EC2 module
+
+# Bastion Security Group
+locals {
+  bastion_sg_common_tags = var.tags
+}
+
+resource "aws_security_group" "bastion_sg" {
+  vpc_id = var.vpc_id
+  name   = "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-sg"
+
+  dynamic "ingress" {
+    for_each = var.bastion_ssh_allowed_ips
+    content {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [ingress.key] # Use the current IP from the map
+      description = ingress.value # Use the description from the map
+    }
+  }
+
+  dynamic "egress" {
+    for_each = var.bastion_ssh_allowed_ips
+    content {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = [egress.key]
+      description = "Allow all outbound to ${egress.value}"
+    }
+  }
+
+  tags = merge(local.bastion_sg_common_tags, tomap({
+    Name = "${var.project_name}-${var.project_segment}-${var.project_env}}-bastion-sg"
+  }))
+}
+
+# RabbitMQ Security Group
 resource "aws_security_group" "rabbitmq" {
   name        = "${var.project_name}-${var.project_segment}-${var.project_env}-rabbitmq-sg"
   description = "Security group for RabbitMQ server"
@@ -17,7 +56,7 @@ resource "aws_security_group" "rabbitmq" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-  security_groups = [var.bastion_sg_id]
+    security_groups = [aws_security_group.bastion_sg.id]
     description     = "Allow SSH from Bastion host"
   }
 
@@ -25,18 +64,18 @@ resource "aws_security_group" "rabbitmq" {
   dynamic "ingress" {
     for_each = var.bastion_ssh_allowed_ips
     content {
-      from_port   = 22
-      to_port     = 22
+      from_port   = 15672
+      to_port     = 15672
       protocol    = "tcp"
-      cidr_blocks = [ingress.key]  # Use the current IP from the map
+      cidr_blocks = [ingress.key] # Use the current IP from the map
       description = "Allow management console access from ${ingress.value}"
     }
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
     security_groups = [var.eks_cluster_security_group_id]
     description     = "Allow all outbound to EKS Cluster SG"
   }

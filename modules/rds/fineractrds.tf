@@ -8,9 +8,9 @@ resource "random_password" "master_password_rds_fineract" {
 resource "aws_db_subnet_group" "fineract_db_subnet_group" {
   name       = "${var.project_name}-${var.project_segment}-${var.project_env}-fineract-rds-subnet-group"
   subnet_ids = [var.private_subnet_01, var.private_subnet_02]
-  
+
   tags = merge(
-    local.common_tags, 
+    local.common_tags,
     {
       Name = "${var.project_name}-${var.project_segment}-${var.project_env}-fineract-rds-subnet-group"
     }
@@ -40,31 +40,31 @@ resource "aws_db_parameter_group" "fineract_mysql" {
 
 # MySQL RDS Instance
 resource "aws_db_instance" "fineract_db_instance" {
-  identifier          = "${var.project_name}-${var.project_segment}-${var.project_env}-fineract-rds-instance"
-  engine              = var.rdsProperty_mysql["ENGINE"]
-  engine_version      = var.rdsProperty_mysql["ENGINE_VERSION"]
-  instance_class      = var.rdsProperty_mysql["INSTANCE_CLASS"]
-  allocated_storage   = var.rdsProperty_mysql["ALLOCATED_STORAGE"]
-  storage_type        = var.rdsProperty_mysql["STORAGE_TYPE"]
-  backup_retention_period = var.rdsProperty_mysql["BACKUP_RETENTION_PERIOD"]
-  max_allocated_storage = var.rdsProperty_mysql["MAX_ALLOCATED_STORAGE"]
-  backup_window         = var.rdsProperty_mysql["BACKUP_WINDOW"]
-  maintenance_window    = var.rdsProperty_mysql["MAINTENANCE_WINDOW"]
+  identifier                 = "${var.project_name}-${var.project_segment}-${var.project_env}-fineract-rds-instance"
+  engine                     = var.rdsProperty_mysql["ENGINE"]
+  engine_version             = var.rdsProperty_mysql["ENGINE_VERSION"]
+  instance_class             = var.rdsProperty_mysql["INSTANCE_CLASS"]
+  allocated_storage          = var.rdsProperty_mysql["ALLOCATED_STORAGE"]
+  storage_type               = var.rdsProperty_mysql["STORAGE_TYPE"]
+  backup_retention_period    = var.rdsProperty_mysql["BACKUP_RETENTION_PERIOD"]
+  max_allocated_storage      = var.rdsProperty_mysql["MAX_ALLOCATED_STORAGE"]
+  backup_window              = var.rdsProperty_mysql["BACKUP_WINDOW"]
+  maintenance_window         = var.rdsProperty_mysql["MAINTENANCE_WINDOW"]
   auto_minor_version_upgrade = var.rdsProperty_mysql["AUTO_MINOR_VERSION_UPGRADE"]
-  skip_final_snapshot = var.rdsProperty_mysql["SKIP_FINAL_SNAPSHOT"]
-  final_snapshot_identifier = var.rdsProperty_mysql["FINAL_SNAPSHOT_IDENTIFIER"]
-  publicly_accessible = false
-  db_subnet_group_name = aws_db_subnet_group.fineract_db_subnet_group.name
-  deletion_protection     = var.rdsProperty_mysql["DELETION_PROTECTION"]
-  apply_immediately   = true
-  storage_encrypted  = true
-  kms_key_id         = var.kms_key.arn
-  parameter_group_name = aws_db_parameter_group.fineract_mysql.name
-  vpc_security_group_ids = [var.fineract_rds_sg_id]
+  skip_final_snapshot        = var.rdsProperty_mysql["SKIP_FINAL_SNAPSHOT"]
+  final_snapshot_identifier  = var.rdsProperty_mysql["FINAL_SNAPSHOT_IDENTIFIER"]
+  publicly_accessible        = false
+  db_subnet_group_name       = aws_db_subnet_group.fineract_db_subnet_group.name
+  deletion_protection        = var.rdsProperty_mysql["DELETION_PROTECTION"]
+  apply_immediately          = true
+  storage_encrypted          = true
+  kms_key_id                 = var.kms_key.arn
+  parameter_group_name       = aws_db_parameter_group.fineract_mysql.name
+  vpc_security_group_ids     = [aws_security_group.fineract_rds_sg.id]
 
-  username     = var.rdsProperty_mysql["USERNAME"]
-  password     = random_password.master_password_rds_fineract.result
-  db_name      = var.rdsProperty_mysql["DATABASE_NAME"]
+  username = var.rdsProperty_mysql["USERNAME"]
+  password = random_password.master_password_rds_fineract.result
+  db_name  = var.rdsProperty_mysql["DATABASE_NAME"]
 
   tags = merge(
     local.common_tags,

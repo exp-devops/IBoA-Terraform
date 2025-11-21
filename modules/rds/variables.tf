@@ -17,11 +17,11 @@ variable "aws_region" {
   description = "aws region"
 }
 variable "rdsProperty" {
-   type = map(string)
+  type        = map(string)
   description = "Map of RDS properties including PORT and other configurations"
 }
 variable "rdsProperty_mysql" {
-   type = map(string)
+  type        = map(string)
   description = "Map of MySQL RDS properties including PORT and other configurations"
 }
 variable "project_name" {
@@ -44,13 +44,24 @@ variable "network_cidr" {
 #   type    = bool
 #   default = false
 # }
- variable "palms_rds_sg_id" {
-   description = "Security group for the PostgreSQL RDS instance"
-   type        = string
+
+variable "fineract_rds_allowed_ips" {
+  type        = map(string)
+  description = "Map of allowed IP addresses for Fineract RDS access"
 }
 
-variable "fineract_rds_sg_id" {
-   description = "Security group for the MySQL RDS instance"
-   type        = string
+variable "palms_rds_allowed_ips" {
+  type        = map(string)
+  description = "Map of allowed IP addresses for PALMS RDS access"
+}
+
+variable "bastion_sg_id" {
+  description = "Security group ID of the bastion host"
+  type        = string
+}
+
+variable "eks_cluster_security_group_id" {
+  description = "Default security group ID for the EKS cluster created by AWS"
+  type        = string
 }
 

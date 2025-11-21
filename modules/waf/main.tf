@@ -101,7 +101,7 @@ resource "aws_wafv2_web_acl" "alb_waf" {
 
     statement {
       rate_based_statement {
-        limit              = 1000  # Architectural requirement: 1,000 requests per 5-minute window
+        limit              = 1000 # Architectural requirement: 1,000 requests per 5-minute window
         aggregate_key_type = "IP"
       }
     }
@@ -123,7 +123,7 @@ resource "aws_wafv2_web_acl" "alb_waf" {
 
     statement {
       rate_based_statement {
-        limit              = 2000  # Second tier: CAPTCHA for higher traffic
+        limit              = 2000 # Second tier: CAPTCHA for higher traffic
         aggregate_key_type = "IP"
       }
     }
@@ -145,7 +145,7 @@ resource "aws_wafv2_web_acl" "alb_waf" {
 
     statement {
       rate_based_statement {
-        limit              = 5000  # Final tier: Hard block for excessive traffic
+        limit              = 5000 # Final tier: Hard block for excessive traffic
         aggregate_key_type = "IP"
       }
     }

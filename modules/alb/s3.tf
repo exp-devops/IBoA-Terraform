@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {}
 
 # S3 bucket for ALB logs
 resource "aws_s3_bucket" "alb_logs" {
-  bucket = "${var.project_name}-${var.project_segment}-${var.project_env}-alb-logs"
+  bucket        = "${var.project_name}-${var.project_segment}-${var.project_env}-alb-logs"
   force_destroy = true
 
   tags = merge(
@@ -53,7 +53,7 @@ resource "aws_s3_bucket_policy" "alb_logs" {
         Principal = {
           AWS = "arn:aws:iam::783225319266:root"
         }
-        Action = "s3:PutObject"
+        Action   = "s3:PutObject"
         Resource = "${aws_s3_bucket.alb_logs.arn}/*"
       }
     ]

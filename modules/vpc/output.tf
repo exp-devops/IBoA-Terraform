@@ -17,7 +17,7 @@ output "private_subnet_02" {
 }
 
 output "igw_id" {
-  value = aws_internet_gateway.tf_igw.id
+  value       = aws_internet_gateway.tf_igw.id
   description = "The ID of the Internet Gateway"
 }
 

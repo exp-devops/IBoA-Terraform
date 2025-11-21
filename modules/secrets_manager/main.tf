@@ -7,7 +7,7 @@ resource "aws_secretsmanager_secret" "postgres_rds_credentials" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVIpostgres-RDS-credentials"
+      Name     = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVIpostgres-RDS-credentials"
       Database = "PostgreSQL"
     }
   )
@@ -33,7 +33,7 @@ resource "aws_secretsmanager_secret" "mysql_rds_credentials" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACTmysql-RDS-credentials"
+      Name     = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACTmysql-RDS-credentials"
       Database = "MySQL"
     }
   )

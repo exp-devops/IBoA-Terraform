@@ -13,7 +13,7 @@ resource "aws_network_acl" "tf_vpc_nacl" {
   vpc_id = aws_vpc.tf_vpc.id
 
   tags = merge(
-    local.common_tags, tomap({Name = "${var.project_name}-${var.project_segment}-${var.project_env}-nacl"})
+    local.common_tags, tomap({ Name = "${var.project_name}-${var.project_segment}-${var.project_env}-nacl" })
   )
 }
 
