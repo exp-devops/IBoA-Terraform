@@ -160,6 +160,16 @@ module "ec2" {
   rabbitmqEC2                   = var.rabbitmqEC2
 }
 
+module "iam" {
+  source            = "./modules/iam"
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+  region            = var.aws_region
+  namespace         = "solviprod"
+  service_account_name = "solvi-sa"
+  tags              = var.tags
+}
+
 /*module "ses" {
   source = "./modules/ses"
 
