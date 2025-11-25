@@ -68,7 +68,7 @@ fineract_rds_allowed_ips = {
 
 ############################### EKS ###############################
 eksProperty = {
-  "CLUSTER_VERSION"       = "1.32"
+  "CLUSTER_VERSION"       = "1.34"
   "NODE_INSTANCE_TYPE"    = "t3.medium"
   "NODE_DISK_SIZE"        = "30"
   "SOLVI_DESIRED_SIZE"    = "1"
