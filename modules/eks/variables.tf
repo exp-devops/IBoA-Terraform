@@ -48,3 +48,8 @@ variable "eks_additional_sg_id" {
   description = "Security group ID for the additional EKS resources"
 }
 
+variable "kms_key_arn" {
+  type        = string
+  description = "ARN of the KMS key to use for EKS encryption"
+}
+

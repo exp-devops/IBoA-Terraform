@@ -31,11 +31,17 @@ resource "aws_instance" "bastion_ec2" {
   key_name      = aws_key_pair.bastion_key_pair.key_name
   associate_public_ip_address = true
   vpc_security_group_ids = [var.bastion_sg_id]
+
+  metadata_options {
+    http_tokens               = "required"
+    http_put_response_hop_limit = 1
+    http_endpoint            = "enabled"
+  }
   
   root_block_device {
     volume_size           = var.bastionEC2["volume_size"]
     volume_type           = var.bastionEC2["volume_type"]
-    encrypted             = var.bastionEC2["encrypted"]
+    encrypted             = true
     kms_key_id            = var.kms_key  # KMS key ARN for encryption
     delete_on_termination = var.bastionEC2["delete_on_termination"]
     tags = merge(local.bastion_common_tags, tomap({"Name": "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-root-volume"}))

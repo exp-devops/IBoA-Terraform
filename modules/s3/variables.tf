@@ -28,15 +28,5 @@ variable "aws_account_id" {
    default     = "ap-southeast-2" # or your preferred region
  }
 
- variable "kms_key_arn" {
-  type        = string
-  description = "ARN of the KMS key to use for S3 bucket encryption"
-}
-
-locals {
-  static_data_common_tags = var.tags
-}
-
-
 
 
