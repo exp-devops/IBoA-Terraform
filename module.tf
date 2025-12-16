@@ -29,6 +29,7 @@ module "eks" {
   eks_cluster_security_group_id = module.eks.default_cluster_security_group_id
   kms_key_arn                   = module.kms.kms_key.arn
   bastion_sg_id                 = module.ec2.bastion_sg_id
+  eks_deployment_role_arn       = module.iam.eks_deployment_role_arn
 }
 
 module "alb" {
@@ -167,6 +168,7 @@ module "iam" {
   region            = var.aws_region
   namespace         = "solviprod"
   service_account_name = "solvi-sa"
+  eks_cluster_name  = module.eks.cluster_name
   tags              = var.tags
 }
 

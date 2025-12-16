@@ -31,3 +31,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "eks_cluster_name" {
+  description = "Name of the EKS cluster for deployment role policy"
+  type        = string
+}
