@@ -66,6 +66,5 @@ variable "bastion_sg_id" {
 variable "eks_deployment_role_arn" {
   type        = string
   description = "ARN of the EKS deployment IAM role for access entry"
-  default     = ""
 }
 

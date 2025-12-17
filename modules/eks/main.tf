@@ -118,7 +118,6 @@ resource "aws_eks_access_entry" "devops_user" {
 
 # EKS Access Entry for EKS Deployment Role
 resource "aws_eks_access_entry" "eks_deployment_role" {
-  count         = var.eks_deployment_role_arn != "" ? 1 : 0
   cluster_name  = aws_eks_cluster.main.name
   principal_arn = var.eks_deployment_role_arn
   type          = "STANDARD"
@@ -126,7 +125,6 @@ resource "aws_eks_access_entry" "eks_deployment_role" {
 
 # EKS Access Policy Association for EKS Deployment Role
 resource "aws_eks_access_policy_association" "eks_deployment_role" {
-  count         = var.eks_deployment_role_arn != "" ? 1 : 0
   cluster_name  = aws_eks_cluster.main.name
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
   principal_arn = var.eks_deployment_role_arn
