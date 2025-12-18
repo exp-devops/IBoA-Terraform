@@ -102,3 +102,7 @@ rabbitmqEC2 = {
   "delete_on_termination" = true
 }
 
+############################### VPC Peering for Jenkins ###############################
+vpc_peering_connection_id = "pcx-00a8f97fcb2bbf81c"
+jenkins_vpc_cidr          = "10.15.0.0/16"
+

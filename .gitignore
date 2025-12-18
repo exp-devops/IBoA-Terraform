@@ -87,3 +87,6 @@ Temporary Items
 # Testing 
 test*
 log*
+keys/iboa-solvi-prod-bastion-key.pem
+keys/iboa-solvi-prod-eks-key.pem
+keys/iboa-solvi-prod-rabbitmq-key.pem

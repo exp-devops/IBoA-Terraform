@@ -21,3 +21,18 @@ output "igw_id" {
   description = "The ID of the Internet Gateway"
 }
 
+output "public_route_table_id" {
+  value       = aws_route_table.tf_rtb_public.id
+  description = "The ID of the public route table"
+}
+
+output "private_route_table_id" {
+  value       = aws_route_table.tf_private_rt.id
+  description = "The ID of the private route table"
+}
+
+output "vpc_cidr" {
+  value       = aws_vpc.tf_vpc.cidr_block
+  description = "The CIDR block of the VPC"
+}
+

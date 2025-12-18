@@ -172,6 +172,22 @@ module "iam" {
   tags              = var.tags
 }
 
+# VPC Peering module for Jenkins cross-account connectivity
+# NOTE: This module accepts the VPC peering connection created from Jenkins account
+# You must first create the peering request from Jenkins account (796973480744)
+# After creating the peering connection, provide the connection ID here
+module "vpc_peering" {
+  source                    = "./modules/vpc_peering"
+  project_name              = var.project_name
+  project_segment           = var.project_segment
+  project_env               = var.project_env
+  tags                      = var.tags
+  vpc_peering_connection_id = var.vpc_peering_connection_id
+  jenkins_vpc_cidr          = var.jenkins_vpc_cidr
+  public_route_table_id     = module.vpc.public_route_table_id
+  private_route_table_id    = module.vpc.private_route_table_id
+}
+
 /*module "ses" {
   source = "./modules/ses"
 

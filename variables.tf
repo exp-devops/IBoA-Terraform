@@ -125,6 +125,19 @@ variable "eksProperty" {
   description = "EKS cluster and node group properties"
 }
 
+#### VPC Peering Variables for Jenkins Connectivity #####
+variable "vpc_peering_connection_id" {
+  type        = string
+  description = "VPC Peering Connection ID created from Jenkins account (796973480744)"
+  default     = ""
+}
+
+variable "jenkins_vpc_cidr" {
+  type        = string
+  description = "CIDR block of Jenkins VPC for cross-account peering"
+  default     = "10.15.0.0/16"
+}
+
 
 /*###### SES #####
 variable "ses_domain_name" {

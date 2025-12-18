@@ -98,6 +98,17 @@ resource "aws_security_group_rule" "eks_cluster_from_bastion" {
   description              = "Allow HTTPS traffic from bastion host to EKS cluster"
 }
 
+# Security group rule to allow Jenkins VPC CIDR access to EKS cluster on port 443
+resource "aws_security_group_rule" "eks_cluster_from_jenkins" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = [var.jenkins_vpc_cidr]
+  security_group_id = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  description       = "Allow HTTPS traffic from Jenkins VPC to EKS cluster API"
+}
+
 # EKS Access Entry for IAM User
 resource "aws_eks_access_policy_association" "devops_user" {
   cluster_name  = aws_eks_cluster.main.name
