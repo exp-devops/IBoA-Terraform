@@ -26,15 +26,15 @@ output "ecr_repository_names" {
 }
 
 # Individual service repository URLs for easy access
-output "cedebe_integration_service_url" {
-  description = "ECR URL for cedebe-integration-service"
-  value       = aws_ecr_repository.repositories["cedebe-integration-service"].repository_url
-}
+# output "cedebe_integration_service_url" {
+#   description = "ECR URL for cedebe-integration-service"
+#   value       = aws_ecr_repository.repositories["cedebe-integration-service"].repository_url
+# }
 
-output "cede_ui_url" {
-  description = "ECR URL for cede-ui"
-  value       = aws_ecr_repository.repositories["cede-ui"].repository_url
-}
+# output "cede_ui_url" {
+#   description = "ECR URL for cede-ui"
+#   value       = aws_ecr_repository.repositories["cede-ui"].repository_url
+# }
 
 output "account_service_url" {
   description = "ECR URL for account-service"

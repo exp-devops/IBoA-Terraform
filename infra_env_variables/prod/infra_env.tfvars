@@ -71,12 +71,12 @@ eksProperty = {
   "CLUSTER_VERSION"       = "1.34"
   "NODE_INSTANCE_TYPE"    = "t3.medium"
   "NODE_DISK_SIZE"        = "30"
-  "SOLVI_DESIRED_SIZE"    = "1"
+  "SOLVI_DESIRED_SIZE"    = "0"
   "SOLVI_MAX_SIZE"        = "1"
-  "SOLVI_MIN_SIZE"        = "1"
-  "FINERACT_DESIRED_SIZE" = "1"
+  "SOLVI_MIN_SIZE"        = "0"
+  "FINERACT_DESIRED_SIZE" = "0"
   "FINERACT_MAX_SIZE"     = "1"
-  "FINERACT_MIN_SIZE"     = "1"
+  "FINERACT_MIN_SIZE"     = "0"
 }
 
 ############################### EC2 ###############################
@@ -91,6 +91,7 @@ bastionEC2 = {
 
 bastion_ssh_allowed_ips = {
   "3.7.243.85/32" = "Exp_OpenVPN_IP"
+  "13.239.132.165/32" = "Solvi_Dev_IP"
 }
 
 # RabbitMQ EC2

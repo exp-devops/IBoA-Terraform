@@ -2,8 +2,6 @@
 
 locals {
   repositories = [
-    "cedebe-integration-service",
-    "cede-ui",
     "account-service",
     "card-service",
     "cede-integration-service",

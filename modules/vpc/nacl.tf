@@ -174,6 +174,17 @@ resource "aws_network_acl_rule" "allow_ssh1" {
   to_port        = 22
 }
 
+# Allow SSH inbound from another specific IP
+resource "aws_network_acl_rule" "allow_ssh2" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 121
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "13.239.132.165/32"
+  from_port      = 22
+  to_port        = 22
+}
+
 # Allow MySQL inbound within VPC
 resource "aws_network_acl_rule" "allow_mysql_inbound" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
