@@ -36,3 +36,9 @@ variable "eks_cluster_name" {
   description = "Name of the EKS cluster for deployment role policy"
   type        = string
 }
+
+variable "grafana_account_id" {
+  description = "AWS account ID where Amazon Managed Grafana is deployed"
+  type        = string
+  default     = "796973480744"
+}

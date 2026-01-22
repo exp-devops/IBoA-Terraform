@@ -92,3 +92,18 @@ output "eks_deployment_policy_name" {
   description = "Name of the EKS deployment IAM policy"
   value       = aws_iam_policy.eks_deployment_policy.name
 }
+
+output "grafana_cloudwatch_role_arn" {
+  description = "ARN of the Grafana CloudWatch cross-account IAM role"
+  value       = aws_iam_role.grafana_cloudwatch_role.arn
+}
+
+output "grafana_cloudwatch_role_name" {
+  description = "Name of the Grafana CloudWatch cross-account IAM role"
+  value       = aws_iam_role.grafana_cloudwatch_role.name
+}
+
+output "grafana_external_id" {
+  description = "External ID to use when configuring the data source in Grafana"
+  value       = "${data.aws_caller_identity.current.account_id}-grafana"
+}

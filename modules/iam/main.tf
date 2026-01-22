@@ -191,3 +191,97 @@ resource "aws_iam_role_policy_attachment" "eks_deployment_ecr_attachment" {
   policy_arn = aws_iam_policy.aws_ecr.arn
   role       = aws_iam_role.eks_deployment_role.name
 }
+
+# IAM Policy for Grafana CloudWatch access
+resource "aws_iam_policy" "grafana_cloudwatch_policy" {
+  name        = "GrafanaCloudWatchAccessPolicy"
+  description = "Policy to allow Amazon Managed Grafana to read CloudWatch metrics and logs for EKS monitoring"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudwatch:DescribeAlarmsForMetric",
+          "cloudwatch:DescribeAlarmHistory",
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:ListMetrics",
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:GetMetricData",
+          "cloudwatch:GetInsightRuleReport"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:DescribeLogGroups",
+          "logs:GetLogGroupFields",
+          "logs:StartQuery",
+          "logs:StopQuery",
+          "logs:GetQueryResults",
+          "logs:GetLogEvents",
+          "logs:FilterLogEvents"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeTags",
+          "ec2:DescribeInstances",
+          "ec2:DescribeRegions"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "tag:GetResources"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# IAM Role for Grafana cross-account access
+resource "aws_iam_role" "grafana_cloudwatch_role" {
+  name        = "GrafanaCloudWatchCrossAccountRole"
+  description = "Cross-account role for Amazon Managed Grafana to access CloudWatch metrics and logs"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.grafana_account_id}:root"
+        }
+        Action = "sts:AssumeRole"
+        Condition = {
+          StringEquals = {
+            "sts:ExternalId" = "${data.aws_caller_identity.current.account_id}-grafana"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "GrafanaCloudWatchCrossAccountRole"
+      Purpose = "Cross-account monitoring for Amazon Managed Grafana"
+    }
+  )
+}
+
+# Attach CloudWatch policy to Grafana role
+resource "aws_iam_role_policy_attachment" "grafana_cloudwatch_attachment" {
+  policy_arn = aws_iam_policy.grafana_cloudwatch_policy.arn
+  role       = aws_iam_role.grafana_cloudwatch_role.name
+}
