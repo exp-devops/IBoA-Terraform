@@ -113,7 +113,7 @@ resource "aws_security_group_rule" "eks_cluster_from_jenkins" {
 resource "aws_eks_access_policy_association" "devops_user" {
   cluster_name  = aws_eks_cluster.main.name
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  principal_arn = "arn:aws:iam::782683897710:user/devopsexperion"
+  principal_arn = "arn:aws:iam::507217480696:user/devopsexperionsolviqa"
 
   access_scope {
     type = "cluster"
@@ -123,7 +123,7 @@ resource "aws_eks_access_policy_association" "devops_user" {
 # EKS Access Entry for IAM User
 resource "aws_eks_access_entry" "devops_user" {
   cluster_name  = aws_eks_cluster.main.name
-  principal_arn = "arn:aws:iam::782683897710:user/devopsexperion"
+  principal_arn = "arn:aws:iam::507217480696:user/devopsexperionsolviqa"
   type          = "STANDARD"
 }
 
@@ -151,14 +151,14 @@ resource "aws_eks_access_policy_association" "eks_deployment_role" {
 resource "aws_eks_addon" "coredns" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "coredns"
-  addon_version               = "v1.11.4-eksbuild.24" # Use appropriate version
+  addon_version               = "v1.13.1-eksbuild.1" # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
 }
 
 resource "aws_eks_addon" "vpc_cni" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "vpc-cni"
-  addon_version               = "v1.20.4-eksbuild.1" # Use appropriate version
+  addon_version               = "v1.21.1-eksbuild.1" # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
   resolve_conflicts_on_create = "OVERWRITE"
 }
@@ -166,27 +166,34 @@ resource "aws_eks_addon" "vpc_cni" {
 resource "aws_eks_addon" "kube_proxy" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "kube-proxy"
-  addon_version               = "v1.32.6-eksbuild.12" # Use appropriate version
+  addon_version               = "v1.35.0-eksbuild.2" # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
 }
 
-resource "aws_eks_addon" "aws_ebs_csi_driver" {
+resource "aws_eks_addon" "node_monitoring_agent" {
   cluster_name                = aws_eks_cluster.main.name
-  addon_name                  = "aws-ebs-csi-driver"
-  addon_version               = "v1.52.1-eksbuild.1"
-  service_account_role_arn    = aws_iam_role.ebs_csi_driver.arn
+  addon_name                  = "eks-node-monitoring-agent"
+  addon_version               = "v1.5.2-eksbuild.1" # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
-  resolve_conflicts_on_create = "OVERWRITE"
-
-  depends_on = [
-    aws_iam_role_policy_attachment.ebs_csi_driver_irsa
-  ]
 }
+
+# resource "aws_eks_addon" "aws_ebs_csi_driver" {
+#   cluster_name                = aws_eks_cluster.main.name
+#   addon_name                  = "aws-ebs-csi-driver"
+#   addon_version               = "v1.52.1-eksbuild.1"
+#   service_account_role_arn    = aws_iam_role.ebs_csi_driver.arn
+#   resolve_conflicts_on_update = "OVERWRITE"
+#   resolve_conflicts_on_create = "OVERWRITE"
+
+#   depends_on = [
+#     aws_iam_role_policy_attachment.ebs_csi_driver_irsa
+#   ]
+# }
 
 resource "aws_eks_addon" "cloudwatch_observability" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "amazon-cloudwatch-observability"
-  addon_version               = "v4.6.0-eksbuild.1" # Use appropriate version
+  addon_version               = "v4.10.1-eksbuild.1" # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
   resolve_conflicts_on_create = "OVERWRITE"
   #preserve                    = true
@@ -214,7 +221,8 @@ resource "aws_security_group" "eks_cluster" {
 }*/
 
 # EKS Node Groups
-resource "aws_eks_node_group" "node_group_SOLVI" {
+
+resource "aws_eks_node_group" "node_group_SOLVI_general" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI"
   node_role_arn   = aws_iam_role.eks_node_role.arn
@@ -240,7 +248,51 @@ resource "aws_eks_node_group" "node_group_SOLVI" {
   ]
 
   labels = {
-    NodeGroup   = "SOLVI"
+    dedicated   = "general"
+    Environment = var.project_env
+  }
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Solvi-NG"
+    }
+  )
+}
+
+resource "aws_eks_node_group" "node_group_SOLVI_dedicated" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI"
+  node_role_arn   = aws_iam_role.eks_node_role.arn
+  subnet_ids      = [var.private_subnet_01]
+  instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
+  disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
+
+  scaling_config {
+    desired_size = tonumber(var.eksProperty["SOLVI_DESIRED_SIZE"])
+    max_size     = tonumber(var.eksProperty["SOLVI_MAX_SIZE"])
+    min_size     = tonumber(var.eksProperty["SOLVI_MIN_SIZE"])
+  }
+
+  taint {
+    key    = "dedicated"
+    value  = "highresource"
+    effect = "NO_SCHEDULE"
+  }
+
+  remote_access {
+    ec2_ssh_key               = aws_key_pair.eks_key_pair.key_name
+    source_security_group_ids = [aws_security_group.eks_remote_access.id]
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_worker_node_policy,
+    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.ecr_read_only
+  ]
+
+  labels = {
+    dedicated   = "highresource"
     Environment = var.project_env
   }
 
