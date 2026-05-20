@@ -40,7 +40,7 @@ rdsProperty = {
 
 rdsProperty_mysql = {
   "ENGINE"                     = "mysql"
-  "ENGINE_VERSION"             = "8.0.37"
+  "ENGINE_VERSION"             = "8.0.42"
   "INSTANCE_CLASS"             = "db.t3.micro"
   "BACKUP_RETENTION_PERIOD"    = "7"
   "MULTI_AZ"                   = false
@@ -59,21 +59,30 @@ rdsProperty_mysql = {
 }
 
 palms_rds_allowed_ips = {
-  "3.7.243.85/32" = "Exp_OpenVPN_IP"
+  "103.121.27.178/32" = "experion_tvm_forticlient_primary"
+  "103.79.223.18/32"  = "experion_tvm_forticlient_secondary"
+  "103.135.95.18/32"  = "experion_cochin_forticlient_primary"
+  "103.141.54.138/32" = "experion_cochin_forticlient_secondary"
 }
 
 fineract_rds_allowed_ips = {
-  "3.7.243.85/32" = "Exp_OpenVPN_IP"
+  "103.121.27.178/32" = "experion_tvm_forticlient_primary"
+  "103.79.223.18/32"  = "experion_tvm_forticlient_secondary"
+  "103.135.95.18/32"  = "experion_cochin_forticlient_primary"
+  "103.141.54.138/32" = "experion_cochin_forticlient_secondary"
 }
 
 ############################### EKS ###############################
 eksProperty = {
   "CLUSTER_VERSION"       = "1.35"
-  "NODE_INSTANCE_TYPE"    = "t3.medium"
+  "NODE_INSTANCE_TYPE"    = "t3a.medium"
   "NODE_DISK_SIZE"        = "30"
-  "SOLVI_DESIRED_SIZE"    = "1"
-  "SOLVI_MAX_SIZE"        = "1"
-  "SOLVI_MIN_SIZE"        = "1"
+  "SOLVIGENERAL_DESIRED_SIZE"    = "1"
+  "SOLVIGENERAL_MAX_SIZE"        = "1"
+  "SOLVIGENERAL_MIN_SIZE"        = "1"
+  "SOLVIDEDICATED_DESIRED_SIZE"  = "1"
+  "SOLVIDEDICATED_MAX_SIZE"      = "1"
+  "SOLVIDEDICATED_MIN_SIZE"      = "1"
   "FINERACT_DESIRED_SIZE" = "1"
   "FINERACT_MAX_SIZE"     = "1"
   "FINERACT_MIN_SIZE"     = "1"
@@ -106,6 +115,6 @@ bastion_ssh_allowed_ips = {
 # }
 
 ############################### VPC Peering for Jenkins ###############################
-vpc_peering_connection_id = "pcx-00a8f97fcb2bbf81c"
+vpc_peering_connection_id = "pcx-06be408e421cd4223"
 jenkins_vpc_cidr          = "10.15.0.0/16"
 

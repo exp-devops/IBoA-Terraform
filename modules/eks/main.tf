@@ -224,16 +224,16 @@ resource "aws_security_group" "eks_cluster" {
 
 resource "aws_eks_node_group" "node_group_SOLVI_general" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI"
+  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI-general"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [var.private_subnet_01]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
   disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
 
   scaling_config {
-    desired_size = tonumber(var.eksProperty["SOLVI_DESIRED_SIZE"])
-    max_size     = tonumber(var.eksProperty["SOLVI_MAX_SIZE"])
-    min_size     = tonumber(var.eksProperty["SOLVI_MIN_SIZE"])
+    desired_size = tonumber(var.eksProperty["SOLVIGENERAL_DESIRED_SIZE"])
+    max_size     = tonumber(var.eksProperty["SOLVIGENERAL_MAX_SIZE"])
+    min_size     = tonumber(var.eksProperty["SOLVIGENERAL_MIN_SIZE"])
   }
 
   remote_access {
@@ -255,23 +255,23 @@ resource "aws_eks_node_group" "node_group_SOLVI_general" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Solvi-NG"
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Solvi-General-NG"
     }
   )
 }
 
 resource "aws_eks_node_group" "node_group_SOLVI_dedicated" {
   cluster_name    = aws_eks_cluster.main.name
-  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI"
+  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI-dedicated"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [var.private_subnet_01]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
   disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
 
   scaling_config {
-    desired_size = tonumber(var.eksProperty["SOLVI_DESIRED_SIZE"])
-    max_size     = tonumber(var.eksProperty["SOLVI_MAX_SIZE"])
-    min_size     = tonumber(var.eksProperty["SOLVI_MIN_SIZE"])
+    desired_size = tonumber(var.eksProperty["SOLVIDEDICATED_DESIRED_SIZE"])
+    max_size     = tonumber(var.eksProperty["SOLVIDEDICATED_MAX_SIZE"])
+    min_size     = tonumber(var.eksProperty["SOLVIDEDICATED_MIN_SIZE"])
   }
 
   taint {
@@ -299,7 +299,7 @@ resource "aws_eks_node_group" "node_group_SOLVI_dedicated" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Solvi-NG"
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Solvi-Dedicated-NG"
     }
   )
 }

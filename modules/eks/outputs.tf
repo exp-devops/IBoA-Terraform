@@ -24,13 +24,18 @@ output "cluster_certificate_authority_data" {
 
 
 
-output "node_group_SOLVI_id" {
-  description = "ID of the first node group"
-  value       = aws_eks_node_group.node_group_SOLVI.id
+output "node_group_SOLVI_dedicated_id" {
+  description = "ID of the solvi dedicated node group"
+  value       = aws_eks_node_group.node_group_SOLVI_dedicated.id
+}
+
+output "node_group_SOLVI_general_id" {
+  description = "ID of the solvi general node group"
+  value       = aws_eks_node_group.node_group_SOLVI_general.id
 }
 
 output "node_group_FINERACT_id" {
-  description = "ID of the second node group"
+  description = "ID of the fineract node group"
   value       = aws_eks_node_group.node_group_FINERACT.id
 }
 
@@ -45,7 +50,7 @@ output "oidc_provider_url" {
   value       = aws_eks_cluster.main.identity[0].oidc[0].issuer
 }
 
-output "ebs_csi_driver_role_arn" {
-  description = "ARN of the EBS CSI driver IAM role"
-  value       = aws_iam_role.ebs_csi_driver.arn
-}
+# output "ebs_csi_driver_role_arn" {
+#   description = "ARN of the EBS CSI driver IAM role"
+#   value       = aws_iam_role.ebs_csi_driver.arn
+# }

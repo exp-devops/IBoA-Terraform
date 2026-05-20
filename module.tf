@@ -32,25 +32,25 @@ module "eks" {
   eks_deployment_role_arn       = module.iam.eks_deployment_role_arn
 }
 
-module "alb" {
-  source           = "./modules/alb"
-  project_name     = var.project_name
-  project_segment  = var.project_segment
-  project_env      = var.project_env
-  tags             = var.tags
-  vpc_id           = module.vpc.vpc_id
-  public_subnet_01 = module.vpc.public_subnet_01
-  public_subnet_02 = module.vpc.public_subnet_02
-  kms_key_arn      = module.kms.kms_key.arn
-}
+# module "alb" {
+#   source           = "./modules/alb"
+#   project_name     = var.project_name
+#   project_segment  = var.project_segment
+#   project_env      = var.project_env
+#   tags             = var.tags
+#   vpc_id           = module.vpc.vpc_id
+#   public_subnet_01 = module.vpc.public_subnet_01
+#   public_subnet_02 = module.vpc.public_subnet_02
+#   kms_key_arn      = module.kms.kms_key.arn
+# }
 
-module "waf" {
-  source       = "./modules/waf"
-  project_name = var.project_name
-  project_env  = var.project_env
-  tags         = var.tags
-  alb_arn      = module.alb.alb_arn
-}
+# module "waf" {
+#   source       = "./modules/waf"
+#   project_name = var.project_name
+#   project_env  = var.project_env
+#   tags         = var.tags
+#   alb_arn      = module.alb.alb_arn
+# }
 
 module "secrets_manager" {
   source                = "./modules/secrets_manager"
@@ -158,7 +158,7 @@ module "ec2" {
   igw_id                        = module.vpc.igw_id
   kms_key                       = module.kms.kms_key.arn
   bastionEC2                    = var.bastionEC2
-  rabbitmqEC2                   = var.rabbitmqEC2
+  # rabbitmqEC2                   = var.rabbitmqEC2
 }
 
 module "iam" {

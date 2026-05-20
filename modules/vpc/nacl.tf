@@ -164,12 +164,33 @@ resource "aws_network_acl_rule" "allow_https" {
 }
 
 # Allow SSH inbound from specific IPs
+# resource "aws_network_acl_rule" "allow_ssh1" {
+#   network_acl_id = aws_network_acl.tf_vpc_nacl.id
+#   rule_number    = 120
+#   protocol       = "tcp"
+#   rule_action    = "allow"
+#   cidr_block     = "3.7.243.85/32"
+#   from_port      = 22
+#   to_port        = 22
+# }
+
+# # Allow SSH inbound from another specific IP
+# resource "aws_network_acl_rule" "allow_ssh2" {
+#   network_acl_id = aws_network_acl.tf_vpc_nacl.id
+#   rule_number    = 121
+#   protocol       = "tcp"
+#   rule_action    = "allow"
+#   cidr_block     = "13.239.132.165/32"
+#   from_port      = 22
+#   to_port        = 22
+# }
+# Allow SSH inbound from specific IPs
 resource "aws_network_acl_rule" "allow_ssh1" {
   network_acl_id = aws_network_acl.tf_vpc_nacl.id
   rule_number    = 120
   protocol       = "tcp"
   rule_action    = "allow"
-  cidr_block     = "3.7.243.85/32"
+  cidr_block     = "103.121.27.178/32"
   from_port      = 22
   to_port        = 22
 }
@@ -180,7 +201,29 @@ resource "aws_network_acl_rule" "allow_ssh2" {
   rule_number    = 121
   protocol       = "tcp"
   rule_action    = "allow"
-  cidr_block     = "13.239.132.165/32"
+  cidr_block     = "103.79.223.18/32"
+  from_port      = 22
+  to_port        = 22
+}
+
+# Allow SSH inbound from another specific IP
+resource "aws_network_acl_rule" "allow_ssh3" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 122
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "103.135.95.18/32"
+  from_port      = 22
+  to_port        = 22
+}
+
+# Allow SSH inbound from another specific IP
+resource "aws_network_acl_rule" "allow_ssh4" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 123
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "103.141.54.138/32"
   from_port      = 22
   to_port        = 22
 }

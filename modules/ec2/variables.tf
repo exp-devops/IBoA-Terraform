@@ -37,9 +37,9 @@ variable "private_subnet_01" {
   description = "Private subnet for the RabbitMQ server"
 }
 
-variable "rabbitmqEC2" {
-  description = "Configuration for RabbitMQ EC2 instance"
-}
+# variable "rabbitmqEC2" {
+#   description = "Configuration for RabbitMQ EC2 instance"
+# }
 
 variable "vpc_id" {
   type        = string
