@@ -63,39 +63,32 @@ variable "private_subnet_02_cidr" {
   description = "CIDR block for the second private subnet"
 }
 
-/*### ACM ###
+### ACM ###
+### ACM ###
 variable "domain_name" {
-  description = "Primary domain for the certificate"
+  description = "Primary domain for the certificate (e.g., *.iboa.com.au)"
   type        = string
 }
+
 variable "subject_alternative_names" {
   description = "Additional domain names for the certificate"
   type        = list(string)
   default     = []
 }
-variable "cdn_aws_region" {
-  description = "Additional region for CDN SSL"
-  type        = string
-}
-## ALB ACM ##
-variable "alb_domain_name" {
-  description = "Primary domain for the certificate"
-  type        = string
-}
 
 
 
-### Cloudfront ####
-variable "DomainNames" {
-  type        = map(string)
-  description = "tags"
-}
+# ### Cloudfront ####
+# variable "DomainNames" {
+#   type        = map(string)
+#   description = "tags"
+# }
 
-##### WAF #####
-variable "waf_allowed_ips" {
-  type        = list(string)
-  description = "List of allowed IP addresses"
-}*/
+# ##### WAF #####
+# variable "waf_allowed_ips" {
+#   type        = list(string)
+#   description = "List of allowed IP addresses"
+# }
 
 
 #### RDS Database #####

@@ -49,7 +49,7 @@ resource "tls_private_key" "bastion_key" {
 # Save private key locally
 resource "local_file" "private_key" {
   content         = tls_private_key.bastion_key.private_key_pem
-  filename        = "${path.root}/keys/${var.project_name}-${var.project_segment}-${var.project_env}-bastion-key.pem"
+  filename        = "${path.root}/pem/${var.project_name}-${var.project_segment}-${var.project_env}-bastion-key.pem"
   file_permission = "0400" # Read-only for the current user
 }
 
@@ -98,15 +98,15 @@ resource "aws_instance" "bastion_ec2" {
 }
 
 ######### Elastic IP (EIP) ##########
-resource "aws_eip" "bastion_ec2_eip" {
-  domain     = "vpc"
-  depends_on = [var.igw_id]
+# resource "aws_eip" "bastion_ec2_eip" {
+#   domain     = "vpc"
+#   depends_on = [var.igw_id]
 
-  tags = merge(local.bastion_common_tags, tomap({ "Name" : "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-eip" }))
-}
+#   tags = merge(local.bastion_common_tags, tomap({ "Name" : "${var.project_name}-${var.project_segment}-${var.project_env}-bastion-eip" }))
+# }
 
-# Associate the Elastic IP with the EC2 instance
-resource "aws_eip_association" "bastion_ec2_eip_associate" {
-  instance_id   = aws_instance.bastion_ec2.id
-  allocation_id = aws_eip.bastion_ec2_eip.id
-}
+# # Associate the Elastic IP with the EC2 instance
+# resource "aws_eip_association" "bastion_ec2_eip_associate" {
+#   instance_id   = aws_instance.bastion_ec2.id
+#   allocation_id = aws_eip.bastion_ec2_eip.id
+# }

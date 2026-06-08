@@ -283,3 +283,78 @@ resource "aws_iam_role_policy_attachment" "grafana_cloudwatch_attachment" {
   policy_arn = aws_iam_policy.grafana_cloudwatch_policy.arn
   role       = aws_iam_role.grafana_cloudwatch_role.name
 }
+
+# IAM Policy for EKS Cluster Autoscaler
+resource "aws_iam_policy" "cluster_autoscaler" {
+  name        = "cluster_autoscaler"
+  description = "Policy for EKS Cluster Autoscaler to manage Auto Scaling groups"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:DescribeAutoScalingGroups",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeLaunchConfigurations",
+          "autoscaling:DescribeScalingActivities",
+          "ec2:DescribeImages",
+          "ec2:DescribeInstanceTypes",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:GetInstanceTypesFromInstanceRequirements",
+          "eks:DescribeNodegroup"
+        ]
+        Resource = ["*"]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup"
+        ]
+        Resource = ["*"]
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# IAM Role for EKS Cluster Autoscaler with OIDC trust relationship
+resource "aws_iam_role" "cluster_autoscaler" {
+  name        = "AmazonEKSClusterAutoscalerRole"
+  description = "IAM role for EKS Cluster Autoscaler with IRSA"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = var.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${replace(var.oidc_provider_url, "https://", "")}:aud" = "sts.amazonaws.com"
+            "${replace(var.oidc_provider_url, "https://", "")}:sub" = "system:serviceaccount:kube-system:cluster-autoscaler"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "AmazonEKSClusterAutoscalerRole"
+    }
+  )
+}
+
+# Attach Cluster Autoscaler policy to the role
+resource "aws_iam_role_policy_attachment" "cluster_autoscaler_attachment" {
+  policy_arn = aws_iam_policy.cluster_autoscaler.arn
+  role       = aws_iam_role.cluster_autoscaler.name
+}

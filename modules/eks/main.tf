@@ -34,7 +34,7 @@ resource "tls_private_key" "eks_key" {
 # Save EKS private key locally
 resource "local_file" "eks_private_key" {
   content         = tls_private_key.eks_key.private_key_pem
-  filename        = "${path.root}/keys/${var.project_name}-${var.project_segment}-${var.project_env}-eks-key.pem"
+  filename        = "${path.root}/pem/${var.project_name}-${var.project_segment}-${var.project_env}-eks-key.pem"
   file_permission = "0400" # Read-only for the current user
 }
 
@@ -193,7 +193,7 @@ resource "aws_eks_addon" "node_monitoring_agent" {
 resource "aws_eks_addon" "cloudwatch_observability" {
   cluster_name                = aws_eks_cluster.main.name
   addon_name                  = "amazon-cloudwatch-observability"
-  addon_version               = "v4.10.1-eksbuild.1" # Use appropriate version
+  addon_version               = "v6.2.0-eksbuild.1" # Use appropriate version
   resolve_conflicts_on_update = "OVERWRITE"
   resolve_conflicts_on_create = "OVERWRITE"
   #preserve                    = true

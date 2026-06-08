@@ -67,17 +67,14 @@ module "secrets_manager" {
   fineract_rds_password = module.rds.fineract_rds_password
 }
 
-/*module "acm" {
+module "acm" {
   source                    = "./modules/acm"
   tags                      = var.tags
   project_name              = var.project_name
   domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
   project_env               = var.project_env
-  aws_cli_profile_name      = var.aws_cli_profile_name
-  cdn_aws_region            = var.cdn_aws_region
-  alb_domain_name           = var.alb_domain_name
-}*/
+}
 
 module "kms" {
   source          = "./modules/kms"

@@ -1,13 +1,13 @@
 # Create secret for PostgreSQL RDS
 resource "aws_secretsmanager_secret" "postgres_rds_credentials" {
-  name        = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVIpostgres-RDS-credentials"
+  name        = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVIpostgres-credentials"
   description = "PostgreSQL RDS credentials for ${var.project_name}-${var.project_env}"
   kms_key_id  = var.kms_key_id
 
   tags = merge(
     var.tags,
     {
-      Name     = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVIpostgres-RDS-credentials"
+      Name     = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVIpostgres-credentials"
       Database = "PostgreSQL"
     }
   )
@@ -26,14 +26,14 @@ resource "aws_secretsmanager_secret_version" "postgres_rds_credentials" {
 
 # Create secret for MySQL RDS
 resource "aws_secretsmanager_secret" "mysql_rds_credentials" {
-  name        = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACTmysql-RDS-credentials"
+  name        = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACTmysql-credentials"
   description = "MySQL RDS credentials for ${var.project_name}-${var.project_env}"
   kms_key_id  = var.kms_key_id
 
   tags = merge(
     var.tags,
     {
-      Name     = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACTmysql-RDS-credentials"
+      Name     = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACTmysql-credentials"
       Database = "MySQL"
     }
   )
@@ -106,3 +106,19 @@ resource "aws_secretsmanager_secret_policy" "FINERACTmysql_rds_credentials" {
 
 # Get current AWS account ID
 data "aws_caller_identity" "current" {}
+
+# Create secret for Application Configuration
+resource "aws_secretsmanager_secret" "iboa_app_config" {
+  name        = "IBoASecretManager"
+  description = "Application configuration for IBoA"
+  kms_key_id  = var.kms_key_id
+
+  tags = merge(
+    var.tags,
+    {
+      Name        = "IBoASecretManager"
+      Type        = "ApplicationConfig"
+      Environment = var.project_env
+    }
+  )
+}
