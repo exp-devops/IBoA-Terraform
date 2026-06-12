@@ -107,3 +107,34 @@ output "grafana_external_id" {
   description = "External ID to use when configuring the data source in Grafana"
   value       = "${data.aws_caller_identity.current.account_id}-grafana"
 }
+
+output "ses_custom_policy_arn" {
+  description = "ARN of the SES custom IAM policy"
+  value       = aws_iam_policy.ses_custom.arn
+}
+
+output "ses_custom_policy_name" {
+  description = "Name of the SES custom IAM policy"
+  value       = aws_iam_policy.ses_custom.name
+}
+
+output "ses_qa_user_name" {
+  description = "Name of the ses_qa IAM user"
+  value       = aws_iam_user.ses_qa.name
+}
+
+output "ses_qa_user_arn" {
+  description = "ARN of the ses_qa IAM user"
+  value       = aws_iam_user.ses_qa.arn
+}
+
+output "ses_qa_access_key_id" {
+  description = "Access key ID for ses_qa user"
+  value       = aws_iam_access_key.ses_qa_access_key.id
+}
+
+output "ses_qa_secret_access_key" {
+  description = "Secret access key for ses_qa user"
+  value       = aws_iam_access_key.ses_qa_access_key.secret
+  sensitive   = true
+}

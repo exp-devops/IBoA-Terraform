@@ -121,6 +121,6 @@ subject_alternative_names = ["iboa.com.au"]
 # 'validation_records' to manually create DNS CNAME records in your DNS provider.
 
 ############################### VPC Peering for Jenkins ###############################
-# vpc_peering_connection_id = "pcx-06be408e421cd4223"
-# jenkins_vpc_cidr          = "10.15.0.0/16"
+vpc_peering_connection_id = "pcx-01fdf51ffe6439c30"
+jenkins_vpc_cidr          = "10.15.0.0/16"
 

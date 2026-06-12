@@ -14,7 +14,7 @@ resource "aws_iam_policy" "secret_readonly_irsa" {
         Action = [
           "secretsmanager:GetSecretValue"
         ]
-        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:*"
+        Resource = "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:IBoASecretManager-*"
       }
     ]
   })
@@ -357,4 +357,52 @@ resource "aws_iam_role" "cluster_autoscaler" {
 resource "aws_iam_role_policy_attachment" "cluster_autoscaler_attachment" {
   policy_arn = aws_iam_policy.cluster_autoscaler.arn
   role       = aws_iam_role.cluster_autoscaler.name
+}
+
+# IAM Policy for SES
+resource "aws_iam_policy" "ses_custom" {
+  name        = "ses_custom"
+  description = "Policy to allow sending emails via AWS SES"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ses:SendRawEmail",
+          "ses:SendEmail",
+          "ses:SendTemplatedEmail",
+          "ses:GetSendQuota"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# IAM User for SES
+resource "aws_iam_user" "ses_qa" {
+  name = "ses_qa"
+
+  tags = var.tags
+}
+
+# Access key for ses_qa user
+resource "aws_iam_access_key" "ses_qa_access_key" {
+  user = aws_iam_user.ses_qa.name
+}
+
+# Attach ses_custom policy to ses_qa user
+resource "aws_iam_user_policy_attachment" "ses_qa_ses_custom_attachment" {
+  user       = aws_iam_user.ses_qa.name
+  policy_arn = aws_iam_policy.ses_custom.arn
+}
+
+# Attach secret_readonly_irsa policy to ses_qa user
+resource "aws_iam_user_policy_attachment" "ses_qa_secret_readonly_attachment" {
+  user       = aws_iam_user.ses_qa.name
+  policy_arn = aws_iam_policy.secret_readonly_irsa.arn
 }

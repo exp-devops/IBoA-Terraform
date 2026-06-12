@@ -132,11 +132,3 @@ variable "jenkins_vpc_cidr" {
 }
 
 
-/*###### SES #####
-variable "ses_domain_name" {
-  description = "The domain name to verify with SES"
-  type        = string
-}
-variable "ses_subdomain" {
-  description = "Subdomain from which emails are allowed to be sent"
-}*/

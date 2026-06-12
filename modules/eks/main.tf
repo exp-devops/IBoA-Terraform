@@ -320,7 +320,7 @@ resource "aws_eks_node_group" "node_group_FINERACT" {
 
   taint {
     key    = "dedicated"
-    value  = "solvifineract"
+    value  = "palmsfineract"
     effect = "NO_SCHEDULE"
   }
 
@@ -337,6 +337,7 @@ resource "aws_eks_node_group" "node_group_FINERACT" {
 
   labels = {
     NodeGroup   = "FINERACT"
+    dedicated = "palmsfineract"
     Environment = var.project_env
   }
 
