@@ -42,3 +42,8 @@ variable "grafana_account_id" {
   type        = string
   default     = "796973480744"
 }
+
+variable "kms_key_arn" {
+  description = "ARN of the KMS key to allow the IRSA role to read/decrypt"
+  type        = string
+}

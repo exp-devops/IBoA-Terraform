@@ -138,3 +138,14 @@ output "ses_qa_secret_access_key" {
   value       = aws_iam_access_key.ses_qa_access_key.secret
   sensitive   = true
 }
+
+output "s3_read_write_access_policy_arn" {
+  description = "ARN of the S3 read/write IAM policy for qaiboadocuments/customer-documents"
+  value       = aws_iam_policy.s3_read_write_access.arn
+}
+
+output "s3_read_write_access_policy_name" {
+  description = "Name of the S3 read/write IAM policy for qaiboadocuments/customer-documents"
+  value       = aws_iam_policy.s3_read_write_access.name
+}
+

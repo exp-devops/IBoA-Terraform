@@ -159,14 +159,15 @@ module "ec2" {
 }
 
 module "iam" {
-  source            = "./modules/iam"
-  oidc_provider_arn = module.eks.oidc_provider_arn
-  oidc_provider_url = module.eks.oidc_provider_url
-  region            = var.aws_region
-  namespace         = "solviprod"
+  source               = "./modules/iam"
+  oidc_provider_arn    = module.eks.oidc_provider_arn
+  oidc_provider_url    = module.eks.oidc_provider_url
+  region               = var.aws_region
+  namespace            = "palmsqa"
   service_account_name = "solvi-sa"
-  eks_cluster_name  = module.eks.cluster_name
-  tags              = var.tags
+  eks_cluster_name     = module.eks.cluster_name
+  tags                 = var.tags
+  kms_key_arn          = module.kms.kms_key.arn
 }
 
 # VPC Peering module for Jenkins cross-account connectivity

@@ -5,7 +5,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_iam_policy" "secret_readonly_irsa" {
   name        = "secret_readonly_irsa"
   description = "Policy to allow reading secrets from AWS Secrets Manager"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -25,7 +25,7 @@ resource "aws_iam_policy" "secret_readonly_irsa" {
 # IAM Role with trust relationship for IRSA
 resource "aws_iam_role" "solvi_irsa_role" {
   name = "solvi_irsa_role"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -53,11 +53,39 @@ resource "aws_iam_role_policy_attachment" "solvi_irsa_policy_attachment" {
   role       = aws_iam_role.solvi_irsa_role.name
 }
 
+# IAM Policy for KMS read/decrypt access used by the IRSA role
+resource "aws_iam_policy" "kms_readonly_irsa" {
+  name        = "kms_readonly_irsa"
+  description = "Policy to allow the IRSA role to read key metadata and decrypt with the project KMS key"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:DescribeKey",
+          "kms:Decrypt"
+        ]
+        Resource = var.kms_key_arn
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# Attach KMS read/decrypt policy to the IRSA role
+resource "aws_iam_role_policy_attachment" "kms_readonly_irsa_attachment" {
+  policy_arn = aws_iam_policy.kms_readonly_irsa.arn
+  role       = aws_iam_role.solvi_irsa_role.name
+}
+
 # IAM Policy for ECR access
 resource "aws_iam_policy" "aws_ecr" {
   name        = "AWS_ecr"
   description = "Policy to allow ECR push operations"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -89,7 +117,7 @@ resource "aws_iam_policy" "aws_ecr" {
 resource "aws_iam_policy" "eks_readonly" {
   name        = "EKS_readonly"
   description = "Policy to allow read-only access to EKS clusters"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -145,13 +173,13 @@ resource "aws_iam_group_policy_attachment" "jenkins_policy" {
 resource "aws_iam_policy" "eks_deployment_policy" {
   name        = "EKS_deployment_policy"
   description = "Policy to allow EKS cluster describe operations"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow"
-        Action = "eks:DescribeCluster"
+        Effect   = "Allow"
+        Action   = "eks:DescribeCluster"
         Resource = "arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:cluster/${var.eks_cluster_name}"
       }
     ]
@@ -163,7 +191,7 @@ resource "aws_iam_policy" "eks_deployment_policy" {
 # IAM Role for EKS deployment
 resource "aws_iam_role" "eks_deployment_role" {
   name = "EKS_deployment_role"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -196,7 +224,7 @@ resource "aws_iam_role_policy_attachment" "eks_deployment_ecr_attachment" {
 resource "aws_iam_policy" "grafana_cloudwatch_policy" {
   name        = "GrafanaCloudWatchAccessPolicy"
   description = "Policy to allow Amazon Managed Grafana to read CloudWatch metrics and logs for EKS monitoring"
-  
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -252,7 +280,7 @@ resource "aws_iam_policy" "grafana_cloudwatch_policy" {
 resource "aws_iam_role" "grafana_cloudwatch_role" {
   name        = "GrafanaCloudWatchCrossAccountRole"
   description = "Cross-account role for Amazon Managed Grafana to access CloudWatch metrics and logs"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -261,18 +289,18 @@ resource "aws_iam_role" "grafana_cloudwatch_role" {
         Principal = {
           AWS = "arn:aws:iam::${var.grafana_account_id}:role/IBoA_grafana"
         }
-        Action = "sts:AssumeRole"
+        Action    = "sts:AssumeRole"
         Condition = {}
-  }
+      }
 
-      
+
     ]
   })
 
   tags = merge(
     var.tags,
     {
-      Name = "GrafanaCloudWatchCrossAccountRole"
+      Name    = "GrafanaCloudWatchCrossAccountRole"
       Purpose = "Cross-account monitoring for Amazon Managed Grafana"
     }
   )
@@ -406,3 +434,79 @@ resource "aws_iam_user_policy_attachment" "ses_qa_secret_readonly_attachment" {
   user       = aws_iam_user.ses_qa.name
   policy_arn = aws_iam_policy.secret_readonly_irsa.arn
 }
+
+# IAM Policy for scoped read/write access to S3 customer documents folder
+resource "aws_iam_policy" "s3_read_write_access" {
+  name        = "s3_read_write_access"
+  description = "Allows list/get/put/delete access only for qaiboadocuments/customer-documents"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListAllMyBuckets"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket"
+        ]
+        Resource = "arn:aws:s3:::qaiboadocuments"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject"
+        ]
+        Resource = "arn:aws:s3:::qaiboadocuments/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:DeleteObject"
+        ]
+        Resource = "arn:aws:s3:::qaiboadocuments/customer-documents/*"
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# Attach the policy to the role
+resource "aws_iam_role_policy_attachment" "s3_read_write_access_policy_attachment" {
+  policy_arn = aws_iam_policy.s3_read_write_access.arn
+  role       = aws_iam_role.solvi_irsa_role.name
+}
+
+# IAM Role for CEDE S3 access (assumed by s3_access_role from account 228886154405)
+resource "aws_iam_role" "s3_access_role_cede" {
+  name = "s3_access_role_cede"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::228886154405:role/cede-irsa-role"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# Attach s3_read_write_access policy to s3_access_role_cede
+resource "aws_iam_role_policy_attachment" "s3_access_role_cede_policy_attachment" {
+  policy_arn = aws_iam_policy.s3_read_write_access.arn
+  role       = aws_iam_role.s3_access_role_cede.name
+}
+
