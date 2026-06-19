@@ -226,7 +226,7 @@ resource "aws_eks_node_group" "node_group_SOLVI_general" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI-general"
   node_role_arn   = aws_iam_role.eks_node_role.arn
-  subnet_ids      = [var.private_subnet_01]
+  subnet_ids      = [var.private_subnet_01, var.private_subnet_02]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
   disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
 
@@ -264,7 +264,7 @@ resource "aws_eks_node_group" "node_group_SOLVI_dedicated" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI-dedicated"
   node_role_arn   = aws_iam_role.eks_node_role.arn
-  subnet_ids      = [var.private_subnet_01]
+  subnet_ids      = [var.private_subnet_01, var.private_subnet_02]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
   disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
 
@@ -308,7 +308,7 @@ resource "aws_eks_node_group" "node_group_FINERACT" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACT"
   node_role_arn   = aws_iam_role.eks_node_role.arn
-  subnet_ids      = [var.private_subnet_02]
+  subnet_ids      = [var.private_subnet_01, var.private_subnet_02]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
   disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
 

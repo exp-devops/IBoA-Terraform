@@ -131,4 +131,29 @@ variable "jenkins_vpc_cidr" {
   default     = "10.15.0.0/16"
 }
 
+#### SES Variables #####
+variable "ses_domains" {
+  description = "SES domain identities to create and verify"
+  type        = list(string)
+  default     = []
+}
+
+variable "ses_verified_email_addresses" {
+  description = "SES email identities to verify"
+  type        = list(string)
+  default     = []
+}
+
+variable "ses_create_smtp_user" {
+  description = "Create IAM SMTP user for SES sending"
+  type        = bool
+  default     = true
+}
+
+variable "ses_smtp_user_name" {
+  description = "Optional custom name for SES SMTP IAM user"
+  type        = string
+  default     = null
+}
+
 

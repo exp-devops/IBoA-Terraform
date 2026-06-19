@@ -106,6 +106,11 @@ resource "aws_iam_role_policy_attachment" "eks_service_policy_node" {
   role       = aws_iam_role.eks_node_role.name
 }
 
+ resource "aws_iam_role_policy_attachment" "ebs_csi_driver_irsa" {
+   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+   role       = aws_iam_role.eks_node_role.name
+ }
+
 # OIDC Provider for IRSA
 data "tls_certificate" "eks_cluster_certificate" {
   url = aws_eks_cluster.main.identity[0].oidc[0].issuer
@@ -125,43 +130,43 @@ resource "aws_iam_openid_connect_provider" "eks_oidc_provider" {
 }
 
 # IAM Role for EBS CSI Driver (IRSA)
-data "aws_iam_policy_document" "ebs_csi_driver_assume_role" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect  = "Allow"
+# data "aws_iam_policy_document" "ebs_csi_driver_assume_role" {
+#   statement {
+#     actions = ["sts:AssumeRoleWithWebIdentity"]
+#     effect  = "Allow"
 
-    principals {
-      identifiers = [aws_iam_openid_connect_provider.eks_oidc_provider.arn]
-      type        = "Federated"
-    }
+#     principals {
+#       identifiers = [aws_iam_openid_connect_provider.eks_oidc_provider.arn]
+#       type        = "Federated"
+#     }
 
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(aws_eks_cluster.main.identity[0].oidc[0].issuer, "https://", "")}:sub"
-      values   = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
-    }
+#     condition {
+#       test     = "StringEquals"
+#       variable = "${replace(aws_eks_cluster.main.identity[0].oidc[0].issuer, "https://", "")}:sub"
+#       values   = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+#     }
 
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(aws_eks_cluster.main.identity[0].oidc[0].issuer, "https://", "")}:aud"
-      values   = ["sts.amazonaws.com"]
-    }
-  }
-}
+#     condition {
+#       test     = "StringEquals"
+#       variable = "${replace(aws_eks_cluster.main.identity[0].oidc[0].issuer, "https://", "")}:aud"
+#       values   = ["sts.amazonaws.com"]
+#     }
+#   }
+# }
 
-resource "aws_iam_role" "ebs_csi_driver" {
-  name               = "${var.project_name}-${var.project_segment}-${var.project_env}-ebs-csi-driver-role"
-  assume_role_policy = data.aws_iam_policy_document.ebs_csi_driver_assume_role.json
+# resource "aws_iam_role" "ebs_csi_driver" {
+#   name               = "${var.project_name}-${var.project_segment}-${var.project_env}-ebs-csi-driver-role"
+#   assume_role_policy = data.aws_iam_policy_document.ebs_csi_driver_assume_role.json
 
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-ebs-csi-driver-role"
-    }
-  )
-}
+#   tags = merge(
+#     var.tags,
+#     {
+#       Name = "${var.project_name}-${var.project_segment}-${var.project_env}-ebs-csi-driver-role"
+#     }
+#   )
+# }
 
-resource "aws_iam_role_policy_attachment" "ebs_csi_driver_irsa" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-  role       = aws_iam_role.ebs_csi_driver.name
-}
+# resource "aws_iam_role_policy_attachment" "ebs_csi_driver_irsa" {
+#   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+#   role       = aws_iam_role.ebs_csi_driver.name
+# }

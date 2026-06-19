@@ -186,25 +186,14 @@ module "vpc_peering" {
   private_route_table_id    = module.vpc.private_route_table_id
 }
 
-# module "ses" {
-#   source       = "./modules/ses"
-#   project_name = var.project_name
-#   project_env  = var.project_env
-#   tags         = var.tags
-#   domain_name  = var.ses_domain_name
+module "ses" {
+  source       = "./modules/ses"
+  project_name = var.project_name
+  project_env  = var.project_env
+  tags         = var.tags
 
-#   # Optional: Custom MAIL FROM domain (e.g., mail.example.com)
-#   mail_from_domain = var.ses_mail_from_domain
-
-#   # Optional: Verified email addresses for testing (required in SES sandbox mode)
-#   verified_email_addresses = var.ses_verified_email_addresses
-
-#   # Optional: Configuration set for tracking email events
-#   create_configuration_set = var.ses_create_configuration_set
-
-#   # Optional: SNS topic for email event notifications
-#   sns_topic_arn = var.ses_sns_topic_arn
-
-#   # Optional: Create receipt rule set for incoming emails
-#   create_receipt_rule_set = var.ses_create_receipt_rule_set
-# }
+  domains                  = var.ses_domains
+  verified_email_addresses = var.ses_verified_email_addresses
+  create_smtp_user         = var.ses_create_smtp_user
+  smtp_user_name           = var.ses_smtp_user_name
+}

@@ -44,16 +44,16 @@ resource "aws_network_acl_association" "tf_nacl_association_private_02" {
 ######## Outbound Rules #######
 
 # Allow HTTPS outbound to S3 prefix list (for EKS CNI plugin and container images)
-resource "aws_network_acl_rule" "allow_https_s3_outbound" {
-  network_acl_id = aws_network_acl.tf_vpc_nacl.id
-  rule_number    = 195
-  protocol       = "tcp"
-  rule_action    = "allow"
-  cidr_block     = data.aws_prefix_list.s3.cidr_blocks[0]
-  from_port      = 443
-  to_port        = 443
-  egress         = true
-}
+# resource "aws_network_acl_rule" "allow_https_s3_outbound" {
+#   network_acl_id = aws_network_acl.tf_vpc_nacl.id
+#   rule_number    = 195
+#   protocol       = "tcp"
+#   rule_action    = "allow"
+#   cidr_block     = data.aws_prefix_list.s3.cidr_blocks[0]
+#   from_port      = 443
+#   to_port        = 443
+#   egress         = true
+# }
 
 # Allow HTTP outbound
 resource "aws_network_acl_rule" "allow_http_outbound" {
@@ -138,6 +138,16 @@ resource "aws_network_acl_rule" "allow_ephemeral_outbound" {
   to_port        = 65535
   egress         = true
 }
+
+resource "aws_network_acl_rule" "allow_dns_outbound" {
+  network_acl_id = aws_network_acl.tf_vpc_nacl.id
+  rule_number    = 270
+  protocol       = "-1"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  egress         = true
+}
+
 
 ######## Inbound Rules #######
 

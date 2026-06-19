@@ -77,15 +77,15 @@ eksProperty = {
   "CLUSTER_VERSION"       = "1.35"
   "NODE_INSTANCE_TYPE"    = "t3a.medium"
   "NODE_DISK_SIZE"        = "30"
-  "SOLVIGENERAL_DESIRED_SIZE"    = "2"
-  "SOLVIGENERAL_MAX_SIZE"        = "3"
-  "SOLVIGENERAL_MIN_SIZE"        = "2"
-  "SOLVIDEDICATED_DESIRED_SIZE"  = "2"
-  "SOLVIDEDICATED_MAX_SIZE"      = "3"
-  "SOLVIDEDICATED_MIN_SIZE"      = "2"
-  "FINERACT_DESIRED_SIZE" = "1"
-  "FINERACT_MAX_SIZE"     = "2"
-  "FINERACT_MIN_SIZE"     = "1"
+  "SOLVIGENERAL_DESIRED_SIZE"    = "0"
+  "SOLVIGENERAL_MAX_SIZE"        = "1"
+  "SOLVIGENERAL_MIN_SIZE"        = "0"
+  "SOLVIDEDICATED_DESIRED_SIZE"  = "0"
+  "SOLVIDEDICATED_MAX_SIZE"      = "1"
+  "SOLVIDEDICATED_MIN_SIZE"      = "0"
+  "FINERACT_DESIRED_SIZE" = "0"
+  "FINERACT_MAX_SIZE"     = "1"
+  "FINERACT_MIN_SIZE"     = "0"
 }
 
 ############################### EC2 ###############################
@@ -119,6 +119,13 @@ domain_name               = "*.iboa.com.au"
 subject_alternative_names = ["iboa.com.au"]
 # Note: DNS is managed externally. After terraform apply, use the output
 # 'validation_records' to manually create DNS CNAME records in your DNS provider.
+
+############################### SES ###############################
+ses_domains                  = ["newqaemail.iboa.com.au"]
+ses_verified_email_addresses = ["bhaskar.nandagopal@experionglobal.com"]
+
+# Optional: Override default SMTP IAM username.
+ses_smtp_user_name = "ses-qa-smtp"
 
 ############################### VPC Peering for Jenkins ###############################
 vpc_peering_connection_id = "pcx-01fdf51ffe6439c30"

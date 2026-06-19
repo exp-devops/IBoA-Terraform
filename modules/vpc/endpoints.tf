@@ -79,6 +79,42 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   )
 }*/
 
+# STS Interface Endpoint for IRSA credential exchange
+# resource "aws_vpc_endpoint" "sts" {
+#   vpc_id              = aws_vpc.tf_vpc.id
+#   service_name        = "com.amazonaws.${var.aws_region}.sts"
+#   vpc_endpoint_type   = "Interface"
+#   subnet_ids          = [aws_subnet.tf_subnet_private_01.id, aws_subnet.tf_subnet_private_02.id]
+#   private_dns_enabled = true
+
+#   security_group_ids = [aws_security_group.vpc_endpoint_sg.id]
+
+#   tags = merge(
+#     local.common_tags,
+#     {
+#       Name = "${var.project_name}-${var.project_segment}-${var.project_env}-sts-endpoint"
+#     }
+#   )
+# }
+
+# # Secrets Manager Interface Endpoint for private secret retrieval
+# resource "aws_vpc_endpoint" "secretsmanager" {
+#   vpc_id              = aws_vpc.tf_vpc.id
+#   service_name        = "com.amazonaws.${var.aws_region}.secretsmanager"
+#   vpc_endpoint_type   = "Interface"
+#   subnet_ids          = [aws_subnet.tf_subnet_private_01.id, aws_subnet.tf_subnet_private_02.id]
+#   private_dns_enabled = true
+
+#   security_group_ids = [aws_security_group.vpc_endpoint_sg.id]
+
+#   tags = merge(
+#     local.common_tags,
+#     {
+#       Name = "${var.project_name}-${var.project_segment}-${var.project_env}-secretsmanager-endpoint"
+#     }
+#   )
+# }
+
 # Associate S3 endpoint with private route table
 resource "aws_vpc_endpoint_route_table_association" "private_s3" {
   vpc_endpoint_id = aws_vpc_endpoint.s3.id
