@@ -139,6 +139,33 @@ output "ses_qa_secret_access_key" {
   sensitive   = true
 }
 
+output "qasolvidevelopereks_user_name" {
+  description = "Name of the qasolvidevelopereks IAM user"
+  value       = aws_iam_user.qasolvidevelopereks.name
+}
+
+output "qasolvidevelopereks_user_arn" {
+  description = "ARN of the qasolvidevelopereks IAM user"
+  value       = aws_iam_user.qasolvidevelopereks.arn
+}
+
+output "qasolvidevelopereks_access_key_id" {
+  description = "Access key ID for qasolvidevelopereks user"
+  value       = aws_iam_access_key.qasolvidevelopereks_access_key.id
+}
+
+output "qasolvidevelopereks_secret_access_key" {
+  description = "Secret access key for qasolvidevelopereks user"
+  value       = aws_iam_access_key.qasolvidevelopereks_access_key.secret
+  sensitive   = true
+}
+
+output "qasolvidevelopereks_console_password" {
+  description = "Initial console password for qasolvidevelopereks user"
+  value       = aws_iam_user_login_profile.qasolvidevelopereks_login_profile.password
+  sensitive   = true
+}
+
 output "s3_read_write_access_policy_arn" {
   description = "ARN of the S3 read/write IAM policy for qaiboadocuments/customer-documents"
   value       = aws_iam_policy.s3_read_write_access.arn

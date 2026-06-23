@@ -158,6 +158,46 @@ resource "aws_iam_group_policy_attachment" "eks_readonly_policy" {
   policy_arn = aws_iam_policy.eks_readonly.arn
 }
 
+# IAM Policy for SSM session access to bastion instance
+resource "aws_iam_policy" "bastion_ssm" {
+  name        = "bastion_ssm"
+  description = "Policy to allow SSM session access to bastion instance"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:StartSession",
+          "ssm:TerminateSession",
+          "ssm:ResumeSession"
+        ]
+        Resource = [
+          "arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:instance/${var.bastion_instance_id}"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:StartSession"
+        ]
+        Resource = [
+          "arn:aws:ssm:${var.region}::document/AWS-StartPortForwardingSessionToRemoteHost"
+        ]
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# Attach bastion_ssm policy to EKSreadonly group
+resource "aws_iam_group_policy_attachment" "eks_readonly_bastion_ssm_policy" {
+  group      = aws_iam_group.eks_readonly.name
+  policy_arn = aws_iam_policy.bastion_ssm.arn
+}
+
 # IAM Group for Jenkins
 /*resource "aws_iam_group" "jenkins" {
   name = "Jenkins"
@@ -421,6 +461,34 @@ resource "aws_iam_user" "ses_qa" {
 # Access key for ses_qa user
 resource "aws_iam_access_key" "ses_qa_access_key" {
   user = aws_iam_user.ses_qa.name
+}
+
+# IAM User for EKS API access
+resource "aws_iam_user" "qasolvidevelopereks" {
+  name = "qasolvidevelopereks"
+
+  tags = var.tags
+}
+
+# Access key for qasolvidevelopereks user
+resource "aws_iam_access_key" "qasolvidevelopereks_access_key" {
+  user = aws_iam_user.qasolvidevelopereks.name
+}
+
+# Console login profile for qasolvidevelopereks user
+resource "aws_iam_user_login_profile" "qasolvidevelopereks_login_profile" {
+  user                    = aws_iam_user.qasolvidevelopereks.name
+  password_length         = 20
+  password_reset_required = true
+}
+
+# Add qasolvidevelopereks to the EKSreadonly IAM group
+resource "aws_iam_user_group_membership" "qasolvidevelopereks_eks_readonly" {
+  user = aws_iam_user.qasolvidevelopereks.name
+
+  groups = [
+    aws_iam_group.eks_readonly.name
+  ]
 }
 
 # Attach ses_custom policy to ses_qa user

@@ -47,3 +47,8 @@ variable "kms_key_arn" {
   description = "ARN of the KMS key to allow the IRSA role to read/decrypt"
   type        = string
 }
+
+variable "bastion_instance_id" {
+  description = "ID of the bastion EC2 instance used for SSM session access"
+  type        = string
+}

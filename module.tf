@@ -168,6 +168,7 @@ module "iam" {
   eks_cluster_name     = module.eks.cluster_name
   tags                 = var.tags
   kms_key_arn          = module.kms.kms_key.arn
+  bastion_instance_id  = module.ec2.bastion_instance_id
 }
 
 # VPC Peering module for Jenkins cross-account connectivity
@@ -196,4 +197,13 @@ module "ses" {
   verified_email_addresses = var.ses_verified_email_addresses
   create_smtp_user         = var.ses_create_smtp_user
   smtp_user_name           = var.ses_smtp_user_name
+}
+
+module "security_groups" {
+  source          = "./modules/security_groups"
+  project_name    = var.project_name
+  project_segment = var.project_segment
+  project_env     = var.project_env
+  tags            = var.tags
+  vpc_id          = module.vpc.vpc_id
 }

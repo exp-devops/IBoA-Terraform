@@ -34,3 +34,21 @@ output "ses_smtp_password_v4" {
   value       = module.ses.smtp_password_v4
   sensitive   = true
 }
+
+output "qasolvidevelopereks_console_password" {
+  description = "Initial console password for qasolvidevelopereks IAM user"
+  value       = module.iam.qasolvidevelopereks_console_password
+  sensitive   = true
+}
+
+output "qasolvidevelopereks_access_key_id" {
+  description = "Access key ID for qasolvidevelopereks IAM user"
+  value       = module.iam.qasolvidevelopereks_access_key_id
+}
+
+output "qasolvidevelopereks_secret_access_key" {
+  description = "Secret access key for qasolvidevelopereks IAM user"
+  value       = module.iam.qasolvidevelopereks_secret_access_key
+  sensitive   = true
+}
+
