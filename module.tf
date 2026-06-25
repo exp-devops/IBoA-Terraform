@@ -197,6 +197,8 @@ module "ses" {
   verified_email_addresses = var.ses_verified_email_addresses
   create_smtp_user         = var.ses_create_smtp_user
   smtp_user_name           = var.ses_smtp_user_name
+  secret_readonly_policy_arn = module.iam.policy_arn
+  kms_readonly_policy_arn    = module.iam.kms_readonly_policy_arn
 }
 
 module "security_groups" {

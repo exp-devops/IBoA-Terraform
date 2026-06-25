@@ -37,3 +37,15 @@ variable "smtp_user_name" {
 	type        = string
 	default     = null
 }
+
+variable "secret_readonly_policy_arn" {
+	description = "Optional IAM policy ARN to attach to the SMTP IAM user"
+	type        = string
+	default     = null
+}
+
+variable "kms_readonly_policy_arn" {
+	description = "Optional KMS readonly IAM policy ARN to attach to the SMTP IAM user"
+	type        = string
+	default     = null
+}

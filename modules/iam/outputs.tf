@@ -8,6 +8,11 @@ output "policy_name" {
   value       = aws_iam_policy.secret_readonly_irsa.name
 }
 
+output "kms_readonly_policy_arn" {
+  description = "ARN of the KMS readonly IAM policy"
+  value       = aws_iam_policy.kms_readonly_irsa.arn
+}
+
 output "role_arn" {
   description = "ARN of the IRSA IAM role"
   value       = aws_iam_role.solvi_irsa_role.arn

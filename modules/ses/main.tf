@@ -56,3 +56,17 @@ resource "aws_iam_access_key" "smtp" {
 
 	user = aws_iam_user.smtp[0].name
 }
+
+resource "aws_iam_user_policy_attachment" "smtp_secret_readonly" {
+	count = var.create_smtp_user && var.secret_readonly_policy_arn != null ? 1 : 0
+
+	user       = aws_iam_user.smtp[0].name
+	policy_arn = var.secret_readonly_policy_arn
+}
+
+resource "aws_iam_user_policy_attachment" "smtp_kms_readonly" {
+	count = var.create_smtp_user && var.kms_readonly_policy_arn != null ? 1 : 0
+
+	user       = aws_iam_user.smtp[0].name
+	policy_arn = var.kms_readonly_policy_arn
+}
