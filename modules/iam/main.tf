@@ -81,6 +81,43 @@ resource "aws_iam_role_policy_attachment" "kms_readonly_irsa_attachment" {
   role       = aws_iam_role.solvi_irsa_role.name
 }
 
+# IAM Policy for KMS encrypt/decrypt access used by the cross-account S3 upload role
+resource "aws_iam_policy" "kms_s3_upload_access" {
+  name        = "kms_s3_upload_access"
+  description = "Policy to allow the cross-account S3 upload role to generate data keys and use the project KMS key"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:DescribeKey",
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey*",
+          "kms:ReEncrypt*"
+        ]
+        Resource = var.kms_key_arn
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# Attach KMS upload policy to s3_access_role_cede
+resource "aws_iam_role_policy_attachment" "s3_access_role_cede_kms_upload_attachment" {
+  policy_arn = aws_iam_policy.kms_s3_upload_access.arn
+  role       = aws_iam_role.s3_access_role_cede.name
+}
+
+# Attach kms policy to s3_access_role_cede
+resource "aws_iam_role_policy_attachment" "s3_access_role_cede_policy_attachment_kms" {
+  policy_arn = aws_iam_policy.kms_readonly_irsa.arn
+  role       = aws_iam_role.s3_access_role_cede.name
+}
+
 # IAM Policy for ECR access
 resource "aws_iam_policy" "aws_ecr" {
   name        = "AWS_ecr"

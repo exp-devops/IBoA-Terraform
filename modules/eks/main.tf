@@ -242,23 +242,65 @@ resource "aws_security_group" "eks_cluster" {
 
 # EKS Node Groups
 
+resource "aws_launch_template" "eks_node_group" {
+  name_prefix = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-ng-"
+  key_name    = aws_key_pair.eks_key_pair.key_name
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size = tonumber(var.eksProperty["NODE_DISK_SIZE"])
+      volume_type = "gp3"
+      encrypted   = true
+      kms_key_id  = var.kms_key_arn
+    }
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = merge(
+      var.tags,
+      {
+        Name = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-node"
+      }
+    )
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+    tags = merge(
+      var.tags,
+      {
+        Name = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-node-volume"
+      }
+    )
+  }
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-eks-ng-lt"
+    }
+  )
+}
+
 resource "aws_eks_node_group" "node_group_SOLVI_general" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-SOLVI-general"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [var.private_subnet_01, var.private_subnet_02]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
-  disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
+
+  launch_template {
+    id      = aws_launch_template.eks_node_group.id
+    version = aws_launch_template.eks_node_group.latest_version
+  }
 
   scaling_config {
     desired_size = tonumber(var.eksProperty["SOLVIGENERAL_DESIRED_SIZE"])
     max_size     = tonumber(var.eksProperty["SOLVIGENERAL_MAX_SIZE"])
     min_size     = tonumber(var.eksProperty["SOLVIGENERAL_MIN_SIZE"])
-  }
-
-  remote_access {
-    ec2_ssh_key               = aws_key_pair.eks_key_pair.key_name
-    source_security_group_ids = [aws_security_group.eks_remote_access.id]
   }
 
   depends_on = [
@@ -286,7 +328,11 @@ resource "aws_eks_node_group" "node_group_SOLVI_dedicated" {
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [var.private_subnet_01, var.private_subnet_02]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
-  disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
+
+  launch_template {
+    id      = aws_launch_template.eks_node_group.id
+    version = aws_launch_template.eks_node_group.latest_version
+  }
 
   scaling_config {
     desired_size = tonumber(var.eksProperty["SOLVIDEDICATED_DESIRED_SIZE"])
@@ -298,11 +344,6 @@ resource "aws_eks_node_group" "node_group_SOLVI_dedicated" {
     key    = "dedicated"
     value  = "highresource"
     effect = "NO_SCHEDULE"
-  }
-
-  remote_access {
-    ec2_ssh_key               = aws_key_pair.eks_key_pair.key_name
-    source_security_group_ids = [aws_security_group.eks_remote_access.id]
   }
 
   depends_on = [
@@ -330,7 +371,11 @@ resource "aws_eks_node_group" "node_group_FINERACT" {
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [var.private_subnet_01, var.private_subnet_02]
   instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
-  disk_size       = tonumber(var.eksProperty["NODE_DISK_SIZE"])
+
+  launch_template {
+    id      = aws_launch_template.eks_node_group.id
+    version = aws_launch_template.eks_node_group.latest_version
+  }
 
   scaling_config {
     desired_size = tonumber(var.eksProperty["FINERACT_DESIRED_SIZE"])
@@ -342,11 +387,6 @@ resource "aws_eks_node_group" "node_group_FINERACT" {
     key    = "dedicated"
     value  = "palmsfineract"
     effect = "NO_SCHEDULE"
-  }
-
-  remote_access {
-    ec2_ssh_key               = aws_key_pair.eks_key_pair.key_name
-    source_security_group_ids = [aws_security_group.eks_remote_access.id]
   }
 
   depends_on = [

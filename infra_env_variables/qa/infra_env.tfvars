@@ -121,9 +121,8 @@ subject_alternative_names = ["iboa.com.au"]
 # 'validation_records' to manually create DNS CNAME records in your DNS provider.
 
 ############################### SES ###############################
-ses_domains                  = ["newqaemail.iboa.com.au"]
-ses_verified_email_addresses = ["bhaskar.nandagopal@experionglobal.com"]
-
+ses_domains                  = ["qaemail.iboa.com.au"]
+ses_verified_email_addresses = ["bhaskar.nandagopal@experionglobal.com", "reshma.reghu@experionglobal.com"]
 # Optional: Override default SMTP IAM username.
 ses_smtp_user_name = "ses-qa-smtp"
 

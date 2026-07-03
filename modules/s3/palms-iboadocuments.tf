@@ -65,30 +65,30 @@ resource "aws_s3_bucket_policy" "tf_s3_bucket_qaiboadocuments_policy" {
           }
         }
       },
-      {
-        Sid       = "DenyIncorrectEncryptionHeader"
-        Effect    = "Deny"
-        Principal = "*"
-        Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.tf_s3_bucket_qaiboadocuments.arn}/*"
-        Condition = {
-          StringNotEquals = {
-            "s3:x-amz-server-side-encryption" = "aws:kms"
-          }
-        }
-      },
-      {
-        Sid       = "DenyUnencryptedObjectUploads"
-        Effect    = "Deny"
-        Principal = "*"
-        Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.tf_s3_bucket_qaiboadocuments.arn}/*"
-        Condition = {
-          Null = {
-            "s3:x-amz-server-side-encryption" = true
-          }
-        }
-      }
+      # {
+      #   Sid       = "DenyIncorrectEncryptionHeader"
+      #   Effect    = "Deny"
+      #   Principal = "*"
+      #   Action    = "s3:PutObject"
+      #   Resource  = "${aws_s3_bucket.tf_s3_bucket_qaiboadocuments.arn}/*"
+      #   Condition = {
+      #     StringNotEquals = {
+      #       "s3:x-amz-server-side-encryption" = "aws:kms"
+      #     }
+      #   }
+      # },
+      # {
+      #   Sid       = "DenyUnencryptedObjectUploads"
+      #   Effect    = "Deny"
+      #   Principal = "*"
+      #   Action    = "s3:PutObject"
+      #   Resource  = "${aws_s3_bucket.tf_s3_bucket_qaiboadocuments.arn}/*"
+      #   Condition = {
+      #     Null = {
+      #       "s3:x-amz-server-side-encryption" = true
+      #     }
+      #   }
+      # }
     ]
   })
   depends_on = [aws_s3_bucket_public_access_block.tf_s3_bucket_public_access_block_qaiboadocuments]
