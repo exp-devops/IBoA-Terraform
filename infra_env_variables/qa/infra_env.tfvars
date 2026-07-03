@@ -122,7 +122,7 @@ subject_alternative_names = ["iboa.com.au"]
 
 ############################### SES ###############################
 ses_domains                  = ["qaemail.iboa.com.au"]
-ses_verified_email_addresses = ["bhaskar.nandagopal@experionglobal.com", "reshma.reghu@experionglobal.com"]
+ses_verified_email_addresses = ["bhaskar.nandagopal@experionglobal.com", "reshma.reghu@experionglobal.com", "steffin.tomy@experionglobal.com", "neethu.k@experionglobal.com"]
 # Optional: Override default SMTP IAM username.
 ses_smtp_user_name = "ses-qa-smtp"
 

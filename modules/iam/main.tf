@@ -53,6 +53,12 @@ resource "aws_iam_role_policy_attachment" "solvi_irsa_policy_attachment" {
   role       = aws_iam_role.solvi_irsa_role.name
 }
 
+# Attach the policy for kms write access to the role
+resource "aws_iam_role_policy_attachment" "solvi_irsa_policy_kms_upload_attachment" {
+  policy_arn = aws_iam_policy.kms_s3_upload_access.arn
+  role       = aws_iam_role.solvi_irsa_role.name
+}
+
 # IAM Policy for KMS read/decrypt access used by the IRSA role
 resource "aws_iam_policy" "kms_readonly_irsa" {
   name        = "kms_readonly_irsa"
