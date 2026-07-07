@@ -77,6 +77,9 @@ eksProperty = {
   "FINERACT_DESIRED_SIZE" = "0"
   "FINERACT_MAX_SIZE"     = "1"
   "FINERACT_MIN_SIZE"     = "0"
+  "FINECTE_DESIRED_SIZE"  = "0"
+  "FINECTE_MAX_SIZE"      = "1"
+  "FINECTE_MIN_SIZE"      = "0"
 }
 
 ############################### EC2 ###############################

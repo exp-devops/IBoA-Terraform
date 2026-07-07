@@ -408,3 +408,47 @@ resource "aws_eks_node_group" "node_group_FINERACT" {
     }
   )
 }
+
+resource "aws_eks_node_group" "node_group_FINECTE" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "${var.project_name}-${var.project_segment}-${var.project_env}-finecte"
+  node_role_arn   = aws_iam_role.eks_node_role.arn
+  subnet_ids      = [var.private_subnet_01, var.private_subnet_02]
+  instance_types  = [var.eksProperty["NODE_INSTANCE_TYPE"]]
+
+  launch_template {
+    id      = aws_launch_template.eks_node_group.id
+    version = aws_launch_template.eks_node_group.latest_version
+  }
+
+  scaling_config {
+    desired_size = tonumber(var.eksProperty["FINECTE_DESIRED_SIZE"])
+    max_size     = tonumber(var.eksProperty["FINECTE_MAX_SIZE"])
+    min_size     = tonumber(var.eksProperty["FINECTE_MIN_SIZE"])
+  }
+
+  taint {
+    key    = "dedicated"
+    value  = "finecte"
+    effect = "NO_SCHEDULE"
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_worker_node_policy,
+    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.ecr_read_only
+  ]
+
+  labels = {
+    NodeGroup   = "finecte"
+    dedicated   = "finecte"
+    Environment = var.project_env
+  }
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.project_segment}-${var.project_env}-Finecte-NG"
+    }
+  )
+}
