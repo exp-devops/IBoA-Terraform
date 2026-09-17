@@ -52,3 +52,8 @@ variable "bastion_instance_id" {
   description = "ID of the bastion EC2 instance used for SSM session access"
   type        = string
 }
+
+variable "solvi_source_bucket_arn" {
+  description = "ARN of the SOLVI source S3 bucket used by SyncExport"
+  type        = string
+}

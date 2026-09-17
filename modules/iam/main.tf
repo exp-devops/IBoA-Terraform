@@ -395,6 +395,105 @@ resource "aws_iam_role_policy_attachment" "grafana_cloudwatch_attachment" {
   role       = aws_iam_role.grafana_cloudwatch_role.name
 }
 
+# IAM Role for Sync export operations
+resource "aws_iam_role" "sync_export" {
+  name = "SyncExport"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::823196744293:role/SyncOperator"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# IAM Policy for Sync export role
+resource "aws_iam_policy" "sync_export_policy" {
+  name        = "SyncExport-policy"
+  description = "Policy for SyncExport role to read source data and dependencies"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "S3Read"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion",
+          "s3:ListBucket",
+          "s3:GetBucketLocation"
+        ]
+        Resource = [
+          var.solvi_source_bucket_arn,
+          "${var.solvi_source_bucket_arn}/*"
+        ]
+      },
+      {
+        Sid    = "SecretsRead"
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:ListSecrets",
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "EcrRead"
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:ListImages",
+          "ecr:DescribeImages",
+          "ecr:DescribeRepositories"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "SsmTunnel"
+        Effect = "Allow"
+        Action = [
+          "ssm:StartSession",
+          "ssm:TerminateSession",
+          "ssm:ResumeSession"
+        ]
+        Resource = [
+          "arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:instance/${var.bastion_instance_id}",
+          "arn:aws:ssm:${var.region}::document/AWS-StartPortForwardingSessionToRemoteHost"
+        ]
+      },
+      {
+        Sid    = "KmsDecryptSource"
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:DescribeKey"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+# Attach SyncExport policy to SyncExport role
+resource "aws_iam_role_policy_attachment" "sync_export_policy_attachment" {
+  policy_arn = aws_iam_policy.sync_export_policy.arn
+  role       = aws_iam_role.sync_export.name
+}
+
 # IAM Policy for EKS Cluster Autoscaler
 resource "aws_iam_policy" "cluster_autoscaler" {
   name        = "cluster_autoscaler"

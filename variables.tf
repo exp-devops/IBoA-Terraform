@@ -97,20 +97,20 @@ variable "rdsProperty" {
   description = "PostgreSQL RDS properties"
 }
 
-variable "rdsProperty_mysql" {
-  type        = map(string)
-  description = "MySQL RDS properties"
-}
+# variable "rdsProperty_mysql" {
+#   type        = map(string)
+#   description = "MySQL RDS properties"
+# }
 
 variable "palms_rds_allowed_ips" {
   type        = map(string)
   description = "Map of allowed IP addresses for RDS access"
 }
 
-variable "fineract_rds_allowed_ips" {
-  type        = map(string)
-  description = "Map of allowed IP addresses for Fineract RDS access"
-}
+# variable "fineract_rds_allowed_ips" {
+#   type        = map(string)
+#   description = "Map of allowed IP addresses for Fineract RDS access"
+# }
 
 #### EKS Variables #####
 variable "eksProperty" {
@@ -154,6 +154,13 @@ variable "ses_smtp_user_name" {
   description = "Optional custom name for SES SMTP IAM user"
   type        = string
   default     = null
+}
+
+#### API Gateway Variables #####
+variable "api_gateways" {
+  description = "Map of API Gateway configurations keyed by logical API name"
+  type        = any
+  default     = {}
 }
 
 

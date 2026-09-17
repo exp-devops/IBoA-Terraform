@@ -28,10 +28,10 @@ variable "rdsProperty" {
   description = "PostgreSQL RDS properties"
 }
 
-variable "rdsProperty_mysql" {
-  type        = map(string)
-  description = "MySQL RDS properties"
-}
+# variable "rdsProperty_mysql" {
+#   type        = map(string)
+#   description = "MySQL RDS properties"
+# }
 
 variable "palms_rds_username" {
   type        = string
@@ -44,13 +44,13 @@ variable "palms_rds_password" {
   sensitive   = true
 }
 
-variable "fineract_rds_username" {
-  type        = string
-  description = "MySQL RDS username"
-}
+# variable "fineract_rds_username" {
+#   type        = string
+#   description = "MySQL RDS username"
+# }
 
-variable "fineract_rds_password" {
-  type        = string
-  description = "MySQL RDS password"
-  sensitive   = true
-}
+# variable "fineract_rds_password" {
+#   type        = string
+#   description = "MySQL RDS password"
+#   sensitive   = true
+# }

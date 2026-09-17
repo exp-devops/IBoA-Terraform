@@ -1,3 +1,4 @@
+/*
 # Random string to use as master password unless one is specified
 resource "random_password" "master_password_rds_fineract" {
   length  = 32
@@ -73,3 +74,4 @@ resource "aws_db_instance" "fineract_db_instance" {
     })
   )
 }
+*/

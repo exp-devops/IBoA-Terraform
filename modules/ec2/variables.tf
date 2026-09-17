@@ -56,10 +56,10 @@ variable "eks_cluster_security_group_id" {
   type        = string
 }
 
-variable "fineract_rds_sg_id" {
-  description = "Security group ID for the Fineract RDS instance"
-  type        = string
-}
+# variable "fineract_rds_sg_id" {
+#   description = "Security group ID for the Fineract RDS instance"
+#   type        = string
+# }
 
 variable "palms_rds_sg_id" {
   description = "Security group ID for the PALMS RDS instance"

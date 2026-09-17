@@ -60,11 +60,11 @@ module "secrets_manager" {
   tags                  = var.tags
   kms_key_id            = module.kms.kms_key.id
   rdsProperty           = var.rdsProperty
-  rdsProperty_mysql     = var.rdsProperty_mysql
+  # rdsProperty_mysql     = var.rdsProperty_mysql
   palms_rds_username    = module.rds.palms_rds_username
   palms_rds_password    = module.rds.palms_rds_password
-  fineract_rds_username = module.rds.fineract_rds_username
-  fineract_rds_password = module.rds.fineract_rds_password
+  # fineract_rds_username = module.rds.fineract_rds_username
+  # fineract_rds_password = module.rds.fineract_rds_password
 }
 
 module "acm" {
@@ -122,7 +122,7 @@ module "rds" {
   aws_region        = var.aws_region
   project_segment   = var.project_segment
   rdsProperty       = var.rdsProperty
-  rdsProperty_mysql = var.rdsProperty_mysql
+  # rdsProperty_mysql = var.rdsProperty_mysql
   project_name      = var.project_name
   project_env       = var.project_env
   tags              = var.tags
@@ -132,7 +132,7 @@ module "rds" {
   kms_key           = module.kms.kms_key
   network_cidr      = var.network_cidr
   # Security group variables for RDS internal security groups
-  fineract_rds_allowed_ips      = var.fineract_rds_allowed_ips
+  # fineract_rds_allowed_ips      = var.fineract_rds_allowed_ips
   palms_rds_allowed_ips         = var.palms_rds_allowed_ips
   bastion_sg_id                 = module.ec2.bastion_sg_id
   eks_cluster_security_group_id = module.eks.default_cluster_security_group_id
@@ -150,7 +150,7 @@ module "ec2" {
   vpc_id                        = module.vpc.vpc_id
   bastion_ssh_allowed_ips       = var.bastion_ssh_allowed_ips
   eks_cluster_security_group_id = module.eks.default_cluster_security_group_id
-  fineract_rds_sg_id            = module.rds.fineract_rds_sg_id
+  #fineract_rds_sg_id            = module.rds.fineract_rds_sg_id
   palms_rds_sg_id               = module.rds.palms_rds_sg_id
   igw_id                        = module.vpc.igw_id
   kms_key                       = module.kms.kms_key.arn
@@ -169,6 +169,7 @@ module "iam" {
   tags                 = var.tags
   kms_key_arn          = module.kms.kms_key.arn
   bastion_instance_id  = module.ec2.bastion_instance_id
+  solvi_source_bucket_arn = module.s3.qaiboadocuments_S3_Bucket_arn
 }
 
 # VPC Peering module for Jenkins cross-account connectivity
@@ -197,8 +198,10 @@ module "ses" {
   verified_email_addresses = var.ses_verified_email_addresses
   create_smtp_user         = var.ses_create_smtp_user
   smtp_user_name           = var.ses_smtp_user_name
-  secret_readonly_policy_arn = module.iam.policy_arn
-  kms_readonly_policy_arn    = module.iam.kms_readonly_policy_arn
+  secret_readonly_policy_arn      = module.iam.policy_arn
+  kms_readonly_policy_arn         = module.iam.kms_readonly_policy_arn
+  kms_s3_upload_access_policy_arn = module.iam.kms_s3_upload_access_policy_arn
+  s3_read_write_access_policy_arn = module.iam.s3_read_write_access_policy_arn
 }
 
 module "security_groups" {
@@ -208,4 +211,39 @@ module "security_groups" {
   project_env     = var.project_env
   tags            = var.tags
   vpc_id          = module.vpc.vpc_id
+}
+
+locals {
+  api_gateway_configs = {
+    for api_key, api_config in var.api_gateways : api_key => {
+      api_name                     = try(api_config.api_name, api_key)
+      api_version                  = try(api_config.api_version, "1.0.0")
+      description                  = try(api_config.description, null)
+      stage_name                   = try(api_config.stage_name, "$default")
+      include_default_paths        = try(api_config.include_default_paths, true)
+      webhook_integration_uri      = try(api_config.webhook_integration_uri, null)
+      default_proxy_integration_uri = try(api_config.default_proxy_integration_uri, null)
+      additional_paths             = try(api_config.additional_paths, {})
+      disable_execute_api_endpoint = try(api_config.disable_execute_api_endpoint, false)
+      fail_on_warnings             = try(api_config.fail_on_warnings, false)
+      tags                         = try(api_config.tags, {})
+    }
+  }
+}
+
+module "api_gateway" {
+  for_each = local.api_gateway_configs
+
+  source                       = "./modules/api_gateway"
+  api_name                     = each.value.api_name
+  api_version                  = each.value.api_version
+  description                  = each.value.description
+  stage_name                   = each.value.stage_name
+  include_default_paths        = each.value.include_default_paths
+  webhook_integration_uri      = each.value.webhook_integration_uri
+  default_proxy_integration_uri = each.value.default_proxy_integration_uri
+  additional_paths             = each.value.additional_paths
+  disable_execute_api_endpoint = each.value.disable_execute_api_endpoint
+  fail_on_warnings             = each.value.fail_on_warnings
+  tags                         = merge(var.tags, each.value.tags)
 }

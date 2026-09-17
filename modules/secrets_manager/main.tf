@@ -24,6 +24,7 @@ resource "aws_secretsmanager_secret_version" "postgres_rds_credentials" {
   })
 }
 
+/*
 # Create secret for MySQL RDS
 resource "aws_secretsmanager_secret" "mysql_rds_credentials" {
   name        = "${var.project_name}-${var.project_segment}-${var.project_env}-FINERACTmysql-credentials"
@@ -49,6 +50,7 @@ resource "aws_secretsmanager_secret_version" "mysql_rds_credentials" {
     port     = var.rdsProperty_mysql["PORT"]
   })
 }
+*/
 
 # Create a resource policy for PostgreSQL credentials
 resource "aws_secretsmanager_secret_policy" "SOLVIpostgres_rds_credentials" {
@@ -77,6 +79,7 @@ resource "aws_secretsmanager_secret_policy" "SOLVIpostgres_rds_credentials" {
   })
 }
 
+/*
 # Create a resource policy for MySQL credentials
 resource "aws_secretsmanager_secret_policy" "FINERACTmysql_rds_credentials" {
   secret_arn = aws_secretsmanager_secret.mysql_rds_credentials.arn
@@ -103,6 +106,7 @@ resource "aws_secretsmanager_secret_policy" "FINERACTmysql_rds_credentials" {
     ]
   })
 }
+*/
 
 # Get current AWS account ID
 data "aws_caller_identity" "current" {}

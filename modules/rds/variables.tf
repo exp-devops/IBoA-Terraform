@@ -20,10 +20,10 @@ variable "rdsProperty" {
   type        = map(string)
   description = "Map of RDS properties including PORT and other configurations"
 }
-variable "rdsProperty_mysql" {
-  type        = map(string)
-  description = "Map of MySQL RDS properties including PORT and other configurations"
-}
+# variable "rdsProperty_mysql" {
+#   type        = map(string)
+#   description = "Map of MySQL RDS properties including PORT and other configurations"
+# }
 variable "project_name" {
   type        = string
   description = "project_name"
@@ -45,10 +45,10 @@ variable "network_cidr" {
 #   default = false
 # }
 
-variable "fineract_rds_allowed_ips" {
-  type        = map(string)
-  description = "Map of allowed IP addresses for Fineract RDS access"
-}
+# variable "fineract_rds_allowed_ips" {
+#   type        = map(string)
+#   description = "Map of allowed IP addresses for Fineract RDS access"
+# }
 
 variable "palms_rds_allowed_ips" {
   type        = map(string)

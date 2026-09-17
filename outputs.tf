@@ -52,3 +52,18 @@ output "qasolvidevelopereks_secret_access_key" {
   sensitive   = true
 }
 
+output "api_gateway_ids" {
+  description = "API Gateway HTTP API IDs keyed by API name"
+  value       = { for name, api in module.api_gateway : name => api.api_id }
+}
+
+output "api_gateway_endpoints" {
+  description = "API Gateway endpoints keyed by API name"
+  value       = { for name, api in module.api_gateway : name => api.api_endpoint }
+}
+
+output "api_gateway_stage_invoke_urls" {
+  description = "API Gateway stage invoke URLs keyed by API name"
+  value       = { for name, api in module.api_gateway : name => api.stage_invoke_url }
+}
+

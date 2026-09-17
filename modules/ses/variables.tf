@@ -49,3 +49,15 @@ variable "kms_readonly_policy_arn" {
 	type        = string
 	default     = null
 }
+
+variable "kms_s3_upload_access_policy_arn" {
+	description = "Optional KMS S3 upload access IAM policy ARN to attach to the SMTP IAM user"
+	type        = string
+	default     = null
+}
+
+variable "s3_read_write_access_policy_arn" {
+	description = "Optional S3 read/write access IAM policy ARN to attach to the SMTP IAM user"
+	type        = string
+	default     = null
+}

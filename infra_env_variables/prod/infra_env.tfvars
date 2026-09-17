@@ -38,33 +38,33 @@ rdsProperty = {
   #"parameterGroupFamily"      = "postgres14"
 }
 
-rdsProperty_mysql = {
-  "ENGINE"                     = "mysql"
-  "ENGINE_VERSION"             = "8.0.37"
-  "INSTANCE_CLASS"             = "db.t3.micro"
-  "BACKUP_RETENTION_PERIOD"    = "7"
-  "MULTI_AZ"                   = false
-  "PORT"                       = "3306"
-  "DELETION_PROTECTION"        = false
-  "USERNAME"                   = "fineractadmin"
-  "DATABASE_NAME"              = "fineractDB"
-  "ALLOCATED_STORAGE"          = "20"
-  "STORAGE_TYPE"               = "gp3"
-  "MAX_ALLOCATED_STORAGE"      = "100"
-  "BACKUP_WINDOW"              = "18:00-18:30"
-  "MAINTENANCE_WINDOW"         = "Tue:16:00-Tue:17:30"
-  "AUTO_MINOR_VERSION_UPGRADE" = "false"
-  "SKIP_FINAL_SNAPSHOT"        = false
-  "FINAL_SNAPSHOT_IDENTIFIER"  = "terraform-finalisnapshot-mysql"
-}
+# rdsProperty_mysql = {
+#   "ENGINE"                     = "mysql"
+#   "ENGINE_VERSION"             = "8.0.37"
+#   "INSTANCE_CLASS"             = "db.t3.micro"
+#   "BACKUP_RETENTION_PERIOD"    = "7"
+#   "MULTI_AZ"                   = false
+#   "PORT"                       = "3306"
+#   "DELETION_PROTECTION"        = false
+#   "USERNAME"                   = "fineractadmin"
+#   "DATABASE_NAME"              = "fineractDB"
+#   "ALLOCATED_STORAGE"          = "20"
+#   "STORAGE_TYPE"               = "gp3"
+#   "MAX_ALLOCATED_STORAGE"      = "100"
+#   "BACKUP_WINDOW"              = "18:00-18:30"
+#   "MAINTENANCE_WINDOW"         = "Tue:16:00-Tue:17:30"
+#   "AUTO_MINOR_VERSION_UPGRADE" = "false"
+#   "SKIP_FINAL_SNAPSHOT"        = false
+#   "FINAL_SNAPSHOT_IDENTIFIER"  = "terraform-finalisnapshot-mysql"
+# }
 
 palms_rds_allowed_ips = {
   "3.7.243.85/32" = "Exp_OpenVPN_IP"
 }
 
-fineract_rds_allowed_ips = {
-  "3.7.243.85/32" = "Exp_OpenVPN_IP"
-}
+# fineract_rds_allowed_ips = {
+#   "3.7.243.85/32" = "Exp_OpenVPN_IP"
+# }
 
 ############################### EKS ###############################
 eksProperty = {

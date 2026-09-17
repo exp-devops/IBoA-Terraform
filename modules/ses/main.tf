@@ -44,7 +44,8 @@ resource "aws_iam_user_policy" "smtp_send" {
 				Action = [
 					"ses:SendEmail",
 					"ses:SendRawEmail",
-					"ses:SendTemplatedEmail"
+					"ses:SendTemplatedEmail",
+					"ses:TestRenderTemplate"
 				]
 				Resource = "*"
 			}
@@ -70,4 +71,18 @@ resource "aws_iam_user_policy_attachment" "smtp_kms_readonly" {
 
 	user       = aws_iam_user.smtp[0].name
 	policy_arn = var.kms_readonly_policy_arn
+}
+
+resource "aws_iam_user_policy_attachment" "smtp_kms_s3_upload_access" {
+	count = var.create_smtp_user && var.kms_s3_upload_access_policy_arn != null ? 1 : 0
+
+	user       = aws_iam_user.smtp[0].name
+	policy_arn = var.kms_s3_upload_access_policy_arn
+}
+
+resource "aws_iam_user_policy_attachment" "smtp_s3_read_write_access" {
+	count = var.create_smtp_user && var.s3_read_write_access_policy_arn != null ? 1 : 0
+
+	user       = aws_iam_user.smtp[0].name
+	policy_arn = var.s3_read_write_access_policy_arn
 }

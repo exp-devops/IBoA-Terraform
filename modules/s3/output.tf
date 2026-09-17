@@ -6,6 +6,10 @@ output "qaiboadocuments_S3_Bucket" {
   value = aws_s3_bucket.tf_s3_bucket_qaiboadocuments
 }
 
+output "qaiboadocuments_S3_Bucket_arn" {
+  value = aws_s3_bucket.tf_s3_bucket_qaiboadocuments.arn
+}
+
 output "qaiboadocuments_mrap_alias" {
   value = aws_s3control_multi_region_access_point.qaiboadocuments_mrap.alias
 }
