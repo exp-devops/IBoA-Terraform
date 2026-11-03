@@ -86,9 +86,9 @@ eksProperty = {
   "FINERACT_DESIRED_SIZE" = "1"
   "FINERACT_MAX_SIZE"     = "2"
   "FINERACT_MIN_SIZE"     = "1"
-  "FINECTE_DESIRED_SIZE"  = "4"
-  "FINECTE_MAX_SIZE"      = "5"
-  "FINECTE_MIN_SIZE"      = "4"
+  # "FINECTE_DESIRED_SIZE"  = "0"
+  # "FINECTE_MAX_SIZE"      = "1"
+  # "FINECTE_MIN_SIZE"      = "0"
 }
 
 ############################### EC2 ###############################
@@ -179,6 +179,64 @@ api_gateways = {
             uri                  = "https://sign.zoho.com.au/api/v1/{proxy}"
             connectionType       = "INTERNET"
             timeoutInMillis      = 30000
+          }
+        }
+      }
+    }
+    disable_execute_api_endpoint = false
+    fail_on_warnings             = false
+    tags                         = {}
+  }
+
+  gocardless = {
+    api_name                      = "GoCardless"
+    api_version                   = "2026-09-28 13:08:11UTC"
+    description                   = "GoCardless API HTTP proxy"
+    stage_name                    = "$default"
+    include_default_paths         = false
+    webhook_integration_uri       = null
+    default_proxy_integration_uri = null
+    additional_paths = {
+      "/api/gocardless/payments/{paymentId}" = {
+        get = {
+          responses = {
+            default = {
+              description = "Default response for GET /api/gocardless/payments/{paymentId}"
+            }
+          }
+          "x-amazon-apigateway-integration" = {
+            payloadFormatVersion = "1.0"
+            type                 = "http_proxy"
+            httpMethod           = "GET"
+            uri                  = "https://api-sandbox.gocardless.com/payments/{paymentId}"
+            connectionType       = "INTERNET"
+          }
+        }
+        parameters = [
+          {
+            name        = "paymentId"
+            in          = "path"
+            description = "Generated path parameter for paymentId"
+            required    = true
+            schema = {
+              type = "string"
+            }
+          }
+        ]
+      }
+      "/api/gocardless/webhook" = {
+        post = {
+          responses = {
+            default = {
+              description = "Default response for POST /api/gocardless/webhook"
+            }
+          }
+          "x-amazon-apigateway-integration" = {
+            payloadFormatVersion = "1.0"
+            type                 = "http_proxy"
+            httpMethod           = "POST"
+            uri                  = "https://qa-solvi.iboa.com.au/api/spw/api/gocardless/webhook"
+            connectionType       = "INTERNET"
           }
         }
       }

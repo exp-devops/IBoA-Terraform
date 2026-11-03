@@ -35,7 +35,7 @@ variable "default_proxy_integration_uri" {
 
 variable "additional_paths" {
   description = "Additional OpenAPI path definitions to merge with the default exported paths"
-  type        = map(any)
+  type        = any
   default     = {}
 }
 
